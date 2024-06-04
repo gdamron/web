@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#fff",
-        accent: "#f0f",
+        primary: "rgb(var(--foreground-rgb))",
+        accent: "rgb(var(--accent-rgb))",
       },
       fontFamily: {
         headline: ["var(--font-special-elite)", "sans"],

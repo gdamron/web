@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${openSans.className} ${openSans.variable} ${specialElite.variable}`}
+        className={`tracking-wide font-light ${openSans.className} ${openSans.variable} ${specialElite.variable}`}
       >
         <Navbar />
         {children}
