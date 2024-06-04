@@ -29,11 +29,23 @@ const Markdown = ({ source }: { source: string }) => {
           );
         },
         h1({ children }) {
-          return <h1 className="font-headline text-4xl py-4">{children}</h1>;
+          const hid =
+            typeof children === "string"
+              ? `${children}`.toLowerCase().split(" ").join("-")
+              : "";
+          return (
+            <h1 id={hid} className="font-headline text-4xl py-4">
+              {children}
+            </h1>
+          );
         },
         h2({ children }) {
+          const hid =
+            typeof children === "string"
+              ? `${children}`.toLowerCase().split(" ").join("-")
+              : "";
           return (
-            <h2 className="text-2xl tracking-wider font-semibold py-4">
+            <h2 id={hid} className="text-2xl tracking-wider font-semibold py-4">
               <div className="border-b w-full">{children}</div>
             </h2>
           );

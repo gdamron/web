@@ -1,7 +1,9 @@
 import Markdown from "../components/Markdown";
 
 const { CMS_BASE_URL, CMS_API_TOKEN } = process.env;
-const ABOUT_ENTITY_ID = `3OXmFbfeto0KIAIIn4LWfP`;
+const ENTITY_ID = `3OXmFbfeto0KIAIIn4LWfP`;
+
+export const revalidate = 60;
 
 type AboutPageResponse = {
   fields: {
@@ -10,8 +12,8 @@ type AboutPageResponse = {
   };
 };
 
-export default async function About() {
-  const url = `${CMS_BASE_URL}/${ABOUT_ENTITY_ID}?access_token=${CMS_API_TOKEN}`;
+const About = async () => {
+  const url = `${CMS_BASE_URL}/${ENTITY_ID}?access_token=${CMS_API_TOKEN}`;
   const cmsRes = await fetch(url);
   const { fields } = (await cmsRes.json()) as AboutPageResponse;
   const { body } = fields;
@@ -25,4 +27,6 @@ export default async function About() {
       </div>
     </main>
   );
-}
+};
+
+export default About;

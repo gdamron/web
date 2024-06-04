@@ -3,6 +3,7 @@
 import Link from "next/link";
 import MenuIcon from "./MenuIcon";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 const navItems = [
   { name: "Projects", path: "/projects" },
@@ -11,6 +12,8 @@ const navItems = [
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathName = usePathname();
+
   const onMenuClick = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -25,7 +28,9 @@ const Navbar = () => {
           <ul className="hidden sm:flex">
             {navItems.map(({ name, path }) => (
               <Link key={path} href={path}>
-                <li className="ml-8 hover:underline underline-offset-8 decoration-2 decoration-accent text-lg">
+                <li
+                  className={`ml-8 ${pathName === path ? "underline" : "hover:underline"} underline-offset-8 decoration-2 decoration-accent text-lg`}
+                >
                   {name}
                 </li>
               </Link>
@@ -55,7 +60,7 @@ const Navbar = () => {
               <Link href="/">
                 <li
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-4 cursor-pointer"
+                  className={`py-4 ${pathName === "/" ? `underline` : ""} cursor-pointer decoration-accent`}
                 >
                   Home
                 </li>
@@ -64,7 +69,7 @@ const Navbar = () => {
                 <Link key={path} href={path}>
                   <li
                     onClick={() => setIsMenuOpen(false)}
-                    className="py-4 cursor-pointer"
+                    className={`py-4 ${pathName === path ? `underline` : ""} cursor-pointer decoration-accent`}
                   >
                     {name}
                   </li>

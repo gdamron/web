@@ -1,7 +1,9 @@
 import Markdown from "../components/Markdown";
 
 const { CMS_BASE_URL, CMS_API_TOKEN } = process.env;
-const ABOUT_ENTITY_ID = `7jKlxkgJnCHErdjBN1JLdT`;
+const ENTITY_ID = `7jKlxkgJnCHErdjBN1JLdT`;
+
+export const revalidate = 60;
 
 type ProjectsPageResponse = {
   fields: {
@@ -11,7 +13,7 @@ type ProjectsPageResponse = {
 };
 
 const Projects = async () => {
-  const url = `${CMS_BASE_URL}/${ABOUT_ENTITY_ID}?access_token=${CMS_API_TOKEN}`;
+  const url = `${CMS_BASE_URL}/${ENTITY_ID}?access_token=${CMS_API_TOKEN}`;
   const cmsRes = await fetch(url);
   const { fields } = (await cmsRes.json()) as ProjectsPageResponse;
   const { body } = fields;
