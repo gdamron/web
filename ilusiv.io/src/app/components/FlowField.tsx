@@ -74,7 +74,7 @@ const FlowField = () => {
     rad: 15.5,
     grainCount: 1024,
     grains: new Array<Grain>(),
-    color: "#cc00cc01",
+    color: "#ee66ee01",
     tNoise: 0,
     currentNoise: 0,
     xyIncr: 0.025,
