@@ -1,5 +1,9 @@
-import FlowField from "./components/FlowField";
+import dynamic from "next/dynamic";
 import Markdown from "./components/Markdown";
+
+const FlowField = dynamic(() => import("./components/FlowField"), {
+  ssr: false,
+});
 
 const { CMS_BASE_URL, CMS_API_TOKEN } = process.env;
 const ENTITY_ID = `dtMEs39juy5zPeh31pwxy`;
