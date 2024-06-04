@@ -1,4 +1,9 @@
+import dynamic from "next/dynamic";
 import Markdown from "./components/Markdown";
+
+const FlowField = dynamic(() => import("./components/FlowField"), {
+  ssr: false,
+});
 
 const { CMS_BASE_URL, CMS_API_TOKEN } = process.env;
 const ENTITY_ID = `dtMEs39juy5zPeh31pwxy`;
@@ -20,6 +25,9 @@ const Home = async () => {
 
   return (
     <main>
+      <div className="absolute -z-10">
+        <FlowField />
+      </div>
       <div className="flex justify-center">
         <div className="py-16 px-8 sm:w-4/5 md:w-3/5 lg:w-1/2">
           <Markdown source={body} />
