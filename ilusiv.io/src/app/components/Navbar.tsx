@@ -43,8 +43,8 @@ const Navbar = () => {
         <div
           className={
             isMenuOpen
-              ? "fixed left-0 top-0 w-[65%] sm:hidden h-screen bg-[#eee] px-6 py-4 ease-in duration-200"
-              : "fixed left-[-100%] top-0 w-[65%] sm:hidden h-screen bg-[#eee] px-6 py-4 ease-in duration-200"
+              ? "fixed left-0 top-0 w-[65%] sm:hidden h-screen bg-menu px-6 py-2 ease-in duration-200"
+              : "fixed left-[-100%] top-0 w-[65%] sm:hidden h-screen bg-menu px-6 py-2 ease-in duration-200"
           }
         >
           <div className="flex w-full items-center justify-end">
@@ -52,7 +52,7 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
               className="cursor-pointer"
             >
-              X
+              <span className="text-4xl">×</span>
             </div>
           </div>
           <div className="flex-col py-4">

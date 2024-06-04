@@ -4,20 +4,22 @@
 
 :root {
   --foreground-rgb: #2c3e50;
-  --background-rgb: 255, 255, 255;
-  --accent-rgb: 255, 0, 255;
+  --background-rgb: #ffffff;
+  --menu-rgb: #eeeeee;
+  --accent-rgb: #ff00ff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: #ffffff;
-    --background-rgb: 0, 0, 0;
+    --foreground-rgb: #c8c8c8;
+    --background-rgb: #000000;
+    --menu-rgb: #181818;
   }
 }
 
 body {
   color: var(--foreground-rgb);
-  background: rgb(var(--background-rgb));
+  background: var(--background-rgb);
   line-height: 1.7rem;
 }
 
