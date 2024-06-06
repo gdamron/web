@@ -1,5 +1,8 @@
 import dynamic from "next/dynamic";
 import Markdown from "./components/Markdown";
+import ChuckButton from "./components/ChuckButton";
+
+import code from "./lib/MusicBox.ck";
 
 const FlowField = dynamic(() => import("./components/FlowField"), {
   ssr: false,
@@ -32,6 +35,9 @@ const Home = async () => {
         <div className="py-16 px-8 sm:w-4/5 md:w-3/5 lg:w-1/2">
           <Markdown source={body} />
         </div>
+      </div>
+      <div className="absolute bottom-0 right-0 p-8">
+        <ChuckButton code={code} />
       </div>
     </main>
   );
