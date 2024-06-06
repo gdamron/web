@@ -26,7 +26,7 @@ const ChuckButton = ({ code }: ChuckButtonProps) => {
     const controlChuck = async () => {
       let chuckRef = chuck ?? (await Chuck.init([]));
       if (!chuck) {
-        setChuck(chuck);
+        setChuck(chuckRef);
       }
 
       if (btnState === PlayState.PLAYING) {

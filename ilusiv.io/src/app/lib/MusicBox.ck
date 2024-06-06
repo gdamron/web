@@ -1,6 +1,7 @@
 class Drone {
 
   SinOsc osc => Gain g;
+  0.0 => osc.gain;
   0.1 => g.gain;
 
   Math.random2(1,3) => int octave;
@@ -14,6 +15,10 @@ class Drone {
   fun void play() {
     g => dac;
     while (true) {
+      if (osc.gain() < 1.0) {
+        osc.gain() + 0.1 => osc.gain;
+      }
+
       1::second => now;
     }
   }

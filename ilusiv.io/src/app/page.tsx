@@ -1,12 +1,11 @@
 import dynamic from "next/dynamic";
 import Markdown from "./components/Markdown";
-import ChuckButton from "./components/ChuckButton";
-
-import code from "./lib/MusicBox.ck";
 
 const FlowField = dynamic(() => import("./components/FlowField"), {
   ssr: false,
 });
+
+const MusicBox = dynamic(() => import("./components/MusicBox"), { ssr: false });
 
 const { CMS_BASE_URL, CMS_API_TOKEN } = process.env;
 const ENTITY_ID = `dtMEs39juy5zPeh31pwxy`;
@@ -37,7 +36,7 @@ const Home = async () => {
         </div>
       </div>
       <div className="absolute bottom-0 right-0 p-8">
-        <ChuckButton code={code} />
+        <MusicBox />
       </div>
     </main>
   );
