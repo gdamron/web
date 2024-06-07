@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { PropsWithChildren, ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -58,6 +59,30 @@ const Markdown = ({ source }: { source: string }) => {
         },
         li({ children }) {
           return <li className="list-disc pl-2">{children}</li>;
+        },
+        iframe({ src }) {
+          return (
+            <span className="flex justify-items-center justify-center py-2">
+              <iframe
+                className="rounded-lg w-full max-w-[960px] aspect-video"
+                src={src || ""}
+              />
+            </span>
+          );
+        },
+        img({ src, alt }) {
+          return (
+            <span className="flex justify-items-center justify-center py-2">
+              <Image
+                className="rounded-lg w-full max-w-[960px]"
+                src={src || ""}
+                alt={alt || ""}
+                width={1920}
+                height={1080}
+                sizes="100vw"
+              />
+            </span>
+          );
         },
         p({ children }) {
           return <p className="py-4">{children}</p>;
