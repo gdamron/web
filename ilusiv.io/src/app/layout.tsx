@@ -1,7 +1,10 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { Open_Sans, Special_Elite } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
+
+const MusicBox = dynamic(() => import("./components/MusicBox"), { ssr: false });
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -31,6 +34,9 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <div className="fixed bottom-0 right-0 p-8">
+          <MusicBox />
+        </div>
       </body>
     </html>
   );
