@@ -2,6 +2,9 @@ import Image from "next/image";
 import { PropsWithChildren, ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import IlusivImage from "./IlusivImage";
+import IlusivH1 from "./IlusivH1";
+import IlusivQuote from "./IlusivQuote";
 
 const Markdown = ({ source }: { source: string }) => {
   return (
@@ -23,22 +26,10 @@ const Markdown = ({ source }: { source: string }) => {
           );
         },
         blockquote({ children }) {
-          return (
-            <blockquote className="border-l-2 my-4 pl-4 text-gray-400">
-              {children}
-            </blockquote>
-          );
+          return <IlusivQuote>{children}</IlusivQuote>;
         },
         h1({ children }) {
-          const hid =
-            typeof children === "string"
-              ? `${children}`.toLowerCase().split(" ").join("-")
-              : "";
-          return (
-            <h1 id={hid} className="font-headline text-4xl py-4">
-              {children}
-            </h1>
-          );
+          return <IlusivH1>{children}</IlusivH1>;
         },
         h2({ children }) {
           const hid =
@@ -71,18 +62,7 @@ const Markdown = ({ source }: { source: string }) => {
           );
         },
         img({ src, alt }) {
-          return (
-            <span className="flex justify-items-center justify-center py-2">
-              <Image
-                className="rounded-lg w-full max-w-[960px]"
-                src={src || ""}
-                alt={alt || ""}
-                width={1920}
-                height={1080}
-                sizes="100vw"
-              />
-            </span>
-          );
+          return <IlusivImage src={src || ""} alt={alt || ""} />;
         },
         p({ children }) {
           return <p className="py-4">{children}</p>;

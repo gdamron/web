@@ -4,13 +4,20 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 type ProjectCardProps = {
+  date: string;
   title: string;
   slug: string;
   summary: string;
   image: string;
 };
 
-const ProjectCard = ({ title, slug, summary, image }: ProjectCardProps) => {
+const ProjectCard = ({
+  date,
+  title,
+  slug,
+  summary,
+  image,
+}: ProjectCardProps) => {
   const router = useRouter();
 
   return (
@@ -32,7 +39,10 @@ const ProjectCard = ({ title, slug, summary, image }: ProjectCardProps) => {
           <h2 className="text-xl mb-2 font-semibold line-clamp-1">{title}</h2>
         </span>
         <p className="text-sm leading-relaxed line-clamp-4">{summary}</p>
-        <div className="flex items-end justify-end h-6 pt-8">
+        <div className="flex items-center justify-between h-6 pt-6 pb-4">
+          <p className="h-6 text-sm font-semibold text-gray-400">
+            {date.split("-")[0]}
+          </p>
           <p className="h-6 text-sm font-semibold text-accent px-1">more ›</p>
         </div>
       </div>
