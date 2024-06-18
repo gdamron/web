@@ -33,7 +33,7 @@ const ProjectPage = async ({ params }: { params: { slug: string } }) => {
     fields: { title, image, date, body },
   } = items[0] || { fields: {} };
 
-  const year = date?.split("-") || "";
+  const year = date?.split("-")[0] || "";
 
   if (!title) {
     return <Ilusiv404 />;
