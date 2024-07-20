@@ -17,6 +17,7 @@
     "raw-loader": "^4.0.2",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.52.1",
     "react-markdown": "^9.0.1",
     "rehype-raw": "^7.0.0",
     "webchuck": "^1.2.7"
