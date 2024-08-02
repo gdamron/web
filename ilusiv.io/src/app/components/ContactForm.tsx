@@ -1,5 +1,3 @@
-"use client";
-
 import { useForm } from "react-hook-form";
 import AlertMessage from "./AlertMessage";
 import IlusivH1 from "./IlusivH1";
@@ -12,7 +10,11 @@ export type FormData = {
   message: string;
 };
 
-const ContactForm = () => {
+export const ContactForm = ({
+  onSubmit,
+}: {
+  onSubmit: (data: FormData) => void;
+}) => {
   const {
     register,
     handleSubmit,
@@ -21,24 +23,15 @@ const ContactForm = () => {
 
   const [hasSentMessage, setHasSentMessage] = useState(false);
 
-  const onSubmit = async (data: FormData) => {
-    console.log(data);
-
-    // const res = fetch("api/contact", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(data),
-    // });
-    //
-    // console.log(res);
-
+  const onFormSubmit = async (data: FormData) => {
     setHasSentMessage(true);
+    onSubmit(data);
   };
 
   return (
     <>
       {hasSentMessage ? (
-        <div>
+        <div className="w-full">
           <IlusivH1>{"Thanks for reaching out."}</IlusivH1>
           <p>
             {
@@ -47,20 +40,16 @@ const ContactForm = () => {
           </p>
         </div>
       ) : (
-        <div>
+        <div className="w-full">
           <IlusivH1>{"What's on you're mind?"}</IlusivH1>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onFormSubmit)}>
             <input
               className="w-full rounded-md my-2 p-2 bg-gray-50"
               {...register("name", { required: true })}
               placeholder="Your name"
               aria-invalid={errors.name ? "true" : "false"}
             />
-            {errors.name && (
-              <p className="text-red-500 text-right text-xs" role="alert">
-                Please enter your name
-              </p>
-            )}
+            {errors.name && <AlertMessage message="Please enter your name" />}
             <input
               className="w-full rounded-md my-2 p-2 bg-gray-50"
               {...register("email", {
@@ -87,7 +76,7 @@ const ContactForm = () => {
               className="w-full min-h-60 rounded-md my-2 p-2 bg-gray-50"
               {...register("message", {
                 required: true,
-                minLength: 100,
+                minLength: 50,
                 maxLength: 2500,
               })}
               placeholder="Tell me..."
@@ -103,7 +92,7 @@ const ContactForm = () => {
             )}
             <div className="flex flex-row-reverse">
               <input
-                className="my-4 py-2 px-8 rounded-md font-medium bg-gray-50 bg-accent opacity-70 hover:opacity-100 cursor-pointer text-white transition-opacity"
+                className="my-4 py-2 px-8 rounded-md font-medium bg-accent opacity-70 hover:opacity-100 cursor-pointer text-white transition-opacity"
                 type="submit"
               />
             </div>
@@ -113,5 +102,3 @@ const ContactForm = () => {
     </>
   );
 };
-
-export default ContactForm;
