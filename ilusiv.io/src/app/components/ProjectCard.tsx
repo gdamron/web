@@ -22,7 +22,7 @@ const ProjectCard = ({
 
   return (
     <div
-      className="rounded-lg overflow-scroll hover:border-accent border-transparent border-[1px] transition md:shadow-md hover:cursor-pointer"
+      className="flex flex-col rounded-lg overflow-scroll hover:border-accent border-transparent border-[1px] transition md:shadow-md hover:cursor-pointer"
       onClick={() => router.push(`/projects/${slug}`)}
     >
       <div className="h-48 overflow-hidden">
@@ -34,11 +34,12 @@ const ProjectCard = ({
           height={1080}
         />
       </div>
-      <div className="p-2 pt-4">
+      <div className="flex-1 flex flex-col p-2 pt-4">
         <span>
           <h2 className="text-xl mb-2 font-semibold line-clamp-1">{title}</h2>
         </span>
         <p className="text-sm leading-relaxed line-clamp-4">{summary}</p>
+        <div className="flex-1" />
         <div className="flex items-center justify-between h-6 pt-6 pb-4">
           <p className="h-6 text-sm font-semibold text-gray-400">
             {date.split("-")[0]}
