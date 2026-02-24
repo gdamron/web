@@ -68,7 +68,7 @@ const Navbar = () => {
                 </li>
               </Link>
               {navItems.map(({ name, path }) => (
-                <Link key={path} href={path} >
+                <Link key={path} href={path}>
                   <li
                     onClick={() => setIsMenuOpen(false)}
                     className={`py-4 ${pathName === path ? `underline` : ""} cursor-pointer decoration-accent`}
