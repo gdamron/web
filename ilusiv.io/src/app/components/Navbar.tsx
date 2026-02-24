@@ -6,9 +6,10 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { name: "Projects", path: "/projects" },
-  { name: "About", path: "/about" },
-  { name: "Contact", path: "/contact" },
+  { name: "Projects", path: "/projects", target: "_self" },
+  { name: "About", path: "/about", target: "_self" },
+  { name: "Contact", path: "/contact", target: "_self" },
+  { name: "The Fugue Diaries", path: "/fugue-diaries", target: "_self" },
 ];
 
 const Navbar = () => {
@@ -27,8 +28,8 @@ const Navbar = () => {
         </Link>
         <div className="hidden sm:flex">
           <ul className="hidden sm:flex">
-            {navItems.map(({ name, path }) => (
-              <Link key={path} href={path}>
+            {navItems.map(({ name, path, target }) => (
+              <Link key={path} href={path} target={target}>
                 <li
                   className={`ml-8 ${pathName === path ? "underline" : "hover:underline"} underline-offset-8 decoration-2 decoration-accent text-lg`}
                 >
@@ -66,8 +67,8 @@ const Navbar = () => {
                   Home
                 </li>
               </Link>
-              {navItems.map(({ name, path }) => (
-                <Link key={path} href={path}>
+              {navItems.map(({ name, path, target }) => (
+                <Link key={path} href={path} target={target}>
                   <li
                     onClick={() => setIsMenuOpen(false)}
                     className={`py-4 ${pathName === path ? `underline` : ""} cursor-pointer decoration-accent`}
