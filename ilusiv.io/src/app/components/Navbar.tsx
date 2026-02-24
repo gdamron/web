@@ -9,6 +9,7 @@ const navItems = [
   { name: "Projects", path: "/projects" },
   { name: "About", path: "/about" },
   { name: "Contact", path: "/contact" },
+  { name: "The Fugue Diaries", path: "/fugue-diaries" },
 ];
 
 const Navbar = () => {
