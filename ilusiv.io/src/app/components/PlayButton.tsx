@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { unmuteIosAudio } from "../lib/iosUnmute";
 
 export enum PlayState {
   NOT_PLAYING,
@@ -15,6 +16,7 @@ const PlayButton = ({ onStateChanged }: PlayButtonProps) => {
   const [btnState, setBtnState] = useState(PlayState.NOT_PLAYING);
 
   const onBtnClick = () => {
+    unmuteIosAudio();
     const nextState =
       btnState === PlayState.PLAYING
         ? PlayState.NOT_PLAYING
