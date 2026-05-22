@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { unmuteIosAudio } from "../lib/iosUnmute";
+import { primeMediaAudio } from "../lib/iosUnmute";
 
 export enum PlayState {
   NOT_PLAYING,
@@ -10,23 +10,60 @@ export enum PlayState {
 
 type PlayButtonProps = {
   onStateChanged: (state: PlayState) => void;
+  title?: string;
+  artist?: string;
 };
 
-const PlayButton = ({ onStateChanged }: PlayButtonProps) => {
+const PlayButton = ({
+  onStateChanged,
+  title = "Music Box",
+  artist = "ilusiv",
+}: PlayButtonProps) => {
   const [btnState, setBtnState] = useState(PlayState.NOT_PLAYING);
 
-  const onBtnClick = () => {
-    unmuteIosAudio();
-    const nextState =
-      btnState === PlayState.PLAYING
-        ? PlayState.NOT_PLAYING
-        : PlayState.PLAYING;
-    setBtnState(nextState);
+  const toggle = () => {
+    primeMediaAudio();
+    setBtnState((s) =>
+      s === PlayState.PLAYING ? PlayState.NOT_PLAYING : PlayState.PLAYING,
+    );
   };
+
+  const onBtnClick = () => toggle();
 
   useEffect(() => {
     onStateChanged(btnState);
   }, [btnState, onStateChanged]);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) {
+      return;
+    }
+    const ms = navigator.mediaSession;
+    ms.metadata = new window.MediaMetadata({ title, artist });
+    const handler = () => toggle();
+    try {
+      ms.setActionHandler("play", handler);
+      ms.setActionHandler("pause", handler);
+    } catch {
+      // unsupported action — ignore
+    }
+    return () => {
+      try {
+        ms.setActionHandler("play", null);
+        ms.setActionHandler("pause", null);
+      } catch {
+        // ignore
+      }
+    };
+  }, [title, artist]);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) {
+      return;
+    }
+    navigator.mediaSession.playbackState =
+      btnState === PlayState.PLAYING ? "playing" : "paused";
+  }, [btnState]);
 
   return (
     <div

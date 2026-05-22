@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import PlayButton, { PlayState } from "./PlayButton";
 import { Chuck } from "webchuck";
+import { getMediaAudioContext, getMediaSinkNode } from "../lib/iosUnmute";
 
 type ChuckButtonProps = {
   code: string;
@@ -24,8 +25,16 @@ const ChuckButton = ({ code }: ChuckButtonProps) => {
     setPrevBtnState(btnState);
 
     const controlChuck = async () => {
-      let chuckRef = chuck ?? (await Chuck.init([]));
-      if (!chuck) {
+      let chuckRef = chuck;
+      if (!chuckRef) {
+        const mediaCtx = getMediaAudioContext();
+        const sinkNode = getMediaSinkNode();
+        chuckRef = mediaCtx
+          ? await Chuck.init([], mediaCtx)
+          : await Chuck.init([]);
+        if (mediaCtx && sinkNode) {
+          (chuckRef as unknown as AudioNode).connect(sinkNode);
+        }
         setChuck(chuckRef);
       }
 
