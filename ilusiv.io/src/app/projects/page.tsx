@@ -28,7 +28,7 @@ const Projects = async () => {
   return (
     <main>
       <div className="flex justify-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-12 px-8 max-w-4xl sm:w-4/5 md:w-3/4 lg:w-3/5">
+        <div className="grid grid-cols-1 pt-24 md:grid-cols-2 gap-8 py-12 px-8 max-w-4xl sm:w-4/5 md:w-3/4 lg:w-3/5">
           {projects.map(({ fields: { date, title, summary, image, slug } }) => (
             <ProjectCard
               date={date}
