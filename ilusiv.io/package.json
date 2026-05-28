@@ -9,20 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ilusiv/fugue-js": "^2026.5.2",
     "@types/p5": "^1.7.6",
     "install": "^0.13.0",
     "next": "14.2.3",
     "npm": "^10.8.1",
     "p5": "^1.9.4",
-    "raw-loader": "^4.0.2",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.1",
     "react-markdown": "^9.0.1",
     "rehype-raw": "^7.0.0",
     "resend": "^3.5.0",
-    "rss-parser": "^3.13.0",
-    "webchuck": "^1.2.7"
+    "rss-parser": "^3.13.0"
   },
   "devDependencies": {
     "@types/node": "^20",

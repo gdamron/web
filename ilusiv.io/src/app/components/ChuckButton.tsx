@@ -1,63 +1,95 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { FuguePlayerInstance } from "@ilusiv/fugue-js";
 import PlayButton, { PlayState } from "./PlayButton";
-import { Chuck } from "webchuck";
 import { getMediaAudioContext, getMediaSinkNode } from "../lib/iosUnmute";
 
-type ChuckButtonProps = {
-  code: string;
-};
+const MUSIC_BOX_URL = "/fugue/music_box.json";
 
-const ChuckButton = ({ code }: ChuckButtonProps) => {
-  const [chuck, setChuck] = useState<Chuck | null>(null);
-  const [shreds, setShreds] = useState<number[]>([]);
+const ChuckButton = () => {
+  const playerRef = useRef<FuguePlayerInstance | null>(null);
+  const loadPromiseRef = useRef<Promise<FuguePlayerInstance> | null>(null);
   const [btnState, setBtnState] = useState<PlayState>(PlayState.NOT_PLAYING);
-  const [prevBtnState, setPrevBtnState] = useState<PlayState>(
-    PlayState.NOT_PLAYING,
-  );
 
-  useEffect(() => {
-    if (btnState === prevBtnState) {
-      return;
+  const loadPlayer = useCallback(async () => {
+    if (playerRef.current) {
+      return playerRef.current;
     }
 
-    setPrevBtnState(btnState);
+    if (loadPromiseRef.current) {
+      return loadPromiseRef.current;
+    }
 
-    const controlChuck = async () => {
-      let chuckRef = chuck;
-      if (!chuckRef) {
+    loadPromiseRef.current = (async () => {
+      try {
         const mediaCtx = getMediaAudioContext();
         const sinkNode = getMediaSinkNode();
-        chuckRef = mediaCtx
-          ? await Chuck.init([], mediaCtx)
-          : await Chuck.init([]);
-        if (mediaCtx && sinkNode) {
-          (chuckRef as unknown as AudioNode).connect(sinkNode);
+        const [{ FuguePlayer }, invention] = await Promise.all([
+          import("@ilusiv/fugue-js"),
+          fetch(MUSIC_BOX_URL).then((response) => {
+            if (!response.ok) {
+              throw new Error(`Unable to load ${MUSIC_BOX_URL}`);
+            }
+            return response.text();
+          }),
+        ]);
+
+        const player = await FuguePlayer.create({
+          ...(mediaCtx ? { audioContext: mediaCtx } : {}),
+          ...(sinkNode ? { destination: sinkNode } : {}),
+          onError(error) {
+            console.error("Fugue player error", error);
+          },
+        });
+
+        await player.loadInvention(invention);
+        playerRef.current = player;
+        return player;
+      } catch (error) {
+        loadPromiseRef.current = null;
+        throw error;
+      }
+    })();
+
+    return loadPromiseRef.current;
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const controlFugue = async () => {
+      if (btnState === PlayState.PLAYING) {
+        const player = await loadPlayer();
+        if (!cancelled) {
+          await player.play();
         }
-        setChuck(chuckRef);
+        return;
       }
 
-      if (btnState === PlayState.PLAYING) {
-        const shred = await chuckRef.runCode(code);
-        setShreds([...shreds, shred]);
-      } else {
-        for (const shred of shreds) {
-          try {
-            await chuckRef.removeShred(shred);
-          } catch (err) {
-            console.warn(
-              `Unable to remove shred ${shred}. It may have exited on its own.`,
-            );
-          }
-        }
-
-        setShreds([]);
+      if (playerRef.current) {
+        playerRef.current.stop();
       }
     };
 
-    controlChuck();
-  }, [btnState, prevBtnState, chuck, code, shreds]);
+    controlFugue().catch((error) => {
+      console.error("Unable to control Fugue player", error);
+      setBtnState(PlayState.NOT_PLAYING);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [btnState, loadPlayer]);
+
+  useEffect(() => {
+    return () => {
+      const player = playerRef.current;
+      playerRef.current = null;
+      loadPromiseRef.current = null;
+      void player?.dispose();
+    };
+  }, []);
 
   return <PlayButton onStateChanged={setBtnState} />;
 };
