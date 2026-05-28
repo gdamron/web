@@ -1,11 +1,9 @@
 "use client";
 
-import ChuckButton from "./ChuckButton";
-
-import code from "../lib/MusicBox.ck";
+import FugueButton from "./FugueButton";
 
 const MusicBox = () => {
-  return <ChuckButton code={code} />;
+  return <FugueButton />;
 };
 
 export default MusicBox;

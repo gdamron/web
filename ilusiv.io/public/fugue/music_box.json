@@ -1,0 +1,697 @@
+{
+  "version": "1.0.0",
+  "title": "MusicBox",
+  "description": "Generative ambient piece inspired by ChucK MusicBox. Sine drone with three sine pad voices, bandpass filtered, with slow envelopes and stereo panning.",
+  "modules": [
+    {
+      "id": "clock_pad",
+      "type": "clock",
+      "config": {
+        "bpm": 3.75
+      }
+    },
+    {
+      "id": "clock_drone",
+      "type": "clock",
+      "config": {
+        "bpm": 2.5
+      }
+    },
+    {
+      "id": "melody_drone",
+      "type": "melody",
+      "config": {
+        "root_note": 37,
+        "scale_degrees": [0, -3, -5, -7],
+        "note_weights": [0.5, 0.125, 0.125, 0.25]
+      }
+    },
+    {
+      "id": "osc_drone",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine"
+      }
+    },
+    {
+      "id": "lfo_drone",
+      "type": "lfo",
+      "config": {
+        "frequency": 0.01,
+        "waveform": "triangle"
+      }
+    },
+    {
+      "id": "vca_drone",
+      "type": "vca",
+      "config": {
+        "cv": 0.125
+      }
+    },
+    {
+      "id": "melody_p1_bot",
+      "type": "melody",
+      "config": {
+        "root_note": 61,
+        "scale_degrees": [-2, 0, 2]
+      }
+    },
+    {
+      "id": "melody_p1_mid",
+      "type": "melody",
+      "config": {
+        "root_note": 61,
+        "scale_degrees": [5, 7, 10]
+      }
+    },
+    {
+      "id": "melody_p1_top",
+      "type": "melody",
+      "config": {
+        "root_note": 61,
+        "scale_degrees": [10, 12, 14, 17],
+        "note_weights": [0.2, 0.2, 0.4, 0.2]
+      }
+    },
+    {
+      "id": "osc_p1_bot",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine",
+        "fm_amount": 0.4
+      }
+    },
+    {
+      "id": "osc_p1_mid",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine",
+        "fm_amount": 0.4
+      }
+    },
+    {
+      "id": "osc_p1_top",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine",
+        "fm_amount": 0.4
+      }
+    },
+    {
+      "id": "lfo_p1",
+      "type": "lfo",
+      "config": {
+        "frequency": 0.05,
+        "waveform": "triangle"
+      }
+    },
+    {
+      "id": "mix_p1",
+      "type": "mixer",
+      "config": {
+        "master": 0.25
+      }
+    },
+    {
+      "id": "adsr_p1",
+      "type": "adsr",
+      "config": {
+        "attack": 4.0,
+        "decay": 0.0,
+        "sustain": 0.8,
+        "release": 12.0
+      }
+    },
+    {
+      "id": "vca_p1",
+      "type": "vca"
+    },
+    {
+      "id": "rez_p1",
+      "type": "filter",
+      "config": {
+        "filter_type": "bandpass",
+        "cutoff": 400.0,
+        "resonance": 0.7
+      }
+    },
+    {
+      "id": "melody_p2_bot",
+      "type": "melody",
+      "config": {
+        "root_note": 68,
+        "scale_degrees": [-2, 0, 2]
+      }
+    },
+    {
+      "id": "melody_p2_mid",
+      "type": "melody",
+      "config": {
+        "root_note": 68,
+        "scale_degrees": [5, 7, 10]
+      }
+    },
+    {
+      "id": "melody_p2_top",
+      "type": "melody",
+      "config": {
+        "root_note": 68,
+        "scale_degrees": [10, 12, 14, 17],
+        "note_weights": [0.2, 0.2, 0.4, 0.2]
+      }
+    },
+    {
+      "id": "osc_p2_bot",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine",
+        "fm_amount": 0.4
+      }
+    },
+    {
+      "id": "osc_p2_mid",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine",
+        "fm_amount": 0.4
+      }
+    },
+    {
+      "id": "osc_p2_top",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine",
+        "fm_amount": 0.4
+      }
+    },
+    {
+      "id": "lfo_p2",
+      "type": "lfo",
+      "config": {
+        "frequency": 0.12,
+        "waveform": "triangle"
+      }
+    },
+    {
+      "id": "mix_p2",
+      "type": "mixer",
+      "config": {
+        "master": 0.25
+      }
+    },
+    {
+      "id": "adsr_p2",
+      "type": "adsr",
+      "config": {
+        "attack": 4.0,
+        "decay": 0.0,
+        "sustain": 0.8,
+        "release": 12.0
+      }
+    },
+    {
+      "id": "vca_p2",
+      "type": "vca"
+    },
+    {
+      "id": "rez_p2",
+      "type": "filter",
+      "config": {
+        "filter_type": "bandpass",
+        "cutoff": 400.0,
+        "resonance": 0.7
+      }
+    },
+    {
+      "id": "melody_p3_bot",
+      "type": "melody",
+      "config": {
+        "root_note": 75,
+        "scale_degrees": [-2, 0, 2]
+      }
+    },
+    {
+      "id": "melody_p3_mid",
+      "type": "melody",
+      "config": {
+        "root_note": 75,
+        "scale_degrees": [5, 7, 10]
+      }
+    },
+    {
+      "id": "melody_p3_top",
+      "type": "melody",
+      "config": {
+        "root_note": 75,
+        "scale_degrees": [10, 12, 14, 17],
+        "note_weights": [0.2, 0.2, 0.4, 0.2]
+      }
+    },
+    {
+      "id": "osc_p3_bot",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine",
+        "fm_amount": 0.4
+      }
+    },
+    {
+      "id": "osc_p3_mid",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine",
+        "fm_amount": 0.4
+      }
+    },
+    {
+      "id": "osc_p3_top",
+      "type": "oscillator",
+      "config": {
+        "oscillator_type": "sine",
+        "fm_amount": 0.4
+      }
+    },
+    {
+      "id": "lfo_p3",
+      "type": "lfo",
+      "config": {
+        "frequency": 0.18,
+        "waveform": "triangle"
+      }
+    },
+    {
+      "id": "mix_p3",
+      "type": "mixer",
+      "config": {
+        "master": 0.25
+      }
+    },
+    {
+      "id": "adsr_p3",
+      "type": "adsr",
+      "config": {
+        "attack": 4.0,
+        "decay": 0.0,
+        "sustain": 0.8,
+        "release": 12.0
+      }
+    },
+    {
+      "id": "vca_p3",
+      "type": "vca"
+    },
+    {
+      "id": "rez_p3",
+      "type": "filter",
+      "config": {
+        "filter_type": "bandpass",
+        "cutoff": 400.0,
+        "resonance": 0.7
+      }
+    },
+    {
+      "id": "mix_main",
+      "type": "mixer",
+      "config": {
+        "pans": [0.0, -0.33, 0.33, 1.0],
+        "master": 1.0
+      }
+    },
+    {
+      "id": "reverb",
+      "type": "reverb",
+      "config": {
+        "room_size": 0.85,
+        "damping": 0.45,
+        "wet": 0.22,
+        "dry": 0.78
+      }
+    },
+    {
+      "id": "dac",
+      "type": "dac"
+    }
+  ],
+  "connections": [
+    {
+      "from": "clock_drone",
+      "from_port": "gate",
+      "to": "melody_drone",
+      "to_port": "gate"
+    },
+    {
+      "from": "melody_drone",
+      "from_port": "frequency",
+      "to": "osc_drone",
+      "to_port": "frequency"
+    },
+    {
+      "from": "lfo_drone",
+      "from_port": "out",
+      "to": "osc_drone",
+      "to_port": "fm"
+    },
+    {
+      "from": "osc_drone",
+      "from_port": "audio",
+      "to": "vca_drone",
+      "to_port": "audio"
+    },
+    {
+      "from": "vca_drone",
+      "from_port": "audio",
+      "to": "mix_main",
+      "to_port": "in1"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "melody_p1_bot",
+      "to_port": "gate"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "melody_p1_mid",
+      "to_port": "gate"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "melody_p1_top",
+      "to_port": "gate"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "adsr_p1",
+      "to_port": "gate"
+    },
+    {
+      "from": "melody_p1_bot",
+      "from_port": "frequency",
+      "to": "osc_p1_bot",
+      "to_port": "frequency"
+    },
+    {
+      "from": "melody_p1_mid",
+      "from_port": "frequency",
+      "to": "osc_p1_mid",
+      "to_port": "frequency"
+    },
+    {
+      "from": "melody_p1_top",
+      "from_port": "frequency",
+      "to": "osc_p1_top",
+      "to_port": "frequency"
+    },
+    {
+      "from": "lfo_p1",
+      "from_port": "out",
+      "to": "osc_p1_bot",
+      "to_port": "fm"
+    },
+    {
+      "from": "lfo_p1",
+      "from_port": "out",
+      "to": "osc_p1_mid",
+      "to_port": "fm"
+    },
+    {
+      "from": "lfo_p1",
+      "from_port": "out",
+      "to": "osc_p1_top",
+      "to_port": "fm"
+    },
+    {
+      "from": "osc_p1_bot",
+      "from_port": "audio",
+      "to": "mix_p1",
+      "to_port": "in1"
+    },
+    {
+      "from": "osc_p1_mid",
+      "from_port": "audio",
+      "to": "mix_p1",
+      "to_port": "in2"
+    },
+    {
+      "from": "osc_p1_top",
+      "from_port": "audio",
+      "to": "mix_p1",
+      "to_port": "in3"
+    },
+    {
+      "from": "mix_p1",
+      "from_port": "left",
+      "to": "vca_p1",
+      "to_port": "audio"
+    },
+    {
+      "from": "adsr_p1",
+      "from_port": "envelope",
+      "to": "vca_p1",
+      "to_port": "cv"
+    },
+    {
+      "from": "vca_p1",
+      "from_port": "audio",
+      "to": "rez_p1",
+      "to_port": "audio"
+    },
+    {
+      "from": "rez_p1",
+      "from_port": "audio",
+      "to": "mix_main",
+      "to_port": "in2"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "melody_p2_bot",
+      "to_port": "gate"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "melody_p2_mid",
+      "to_port": "gate"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "melody_p2_top",
+      "to_port": "gate"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "adsr_p2",
+      "to_port": "gate"
+    },
+    {
+      "from": "melody_p2_bot",
+      "from_port": "frequency",
+      "to": "osc_p2_bot",
+      "to_port": "frequency"
+    },
+    {
+      "from": "melody_p2_mid",
+      "from_port": "frequency",
+      "to": "osc_p2_mid",
+      "to_port": "frequency"
+    },
+    {
+      "from": "melody_p2_top",
+      "from_port": "frequency",
+      "to": "osc_p2_top",
+      "to_port": "frequency"
+    },
+    {
+      "from": "lfo_p2",
+      "from_port": "out",
+      "to": "osc_p2_bot",
+      "to_port": "fm"
+    },
+    {
+      "from": "lfo_p2",
+      "from_port": "out",
+      "to": "osc_p2_mid",
+      "to_port": "fm"
+    },
+    {
+      "from": "lfo_p2",
+      "from_port": "out",
+      "to": "osc_p2_top",
+      "to_port": "fm"
+    },
+    {
+      "from": "osc_p2_bot",
+      "from_port": "audio",
+      "to": "mix_p2",
+      "to_port": "in1"
+    },
+    {
+      "from": "osc_p2_mid",
+      "from_port": "audio",
+      "to": "mix_p2",
+      "to_port": "in2"
+    },
+    {
+      "from": "osc_p2_top",
+      "from_port": "audio",
+      "to": "mix_p2",
+      "to_port": "in3"
+    },
+    {
+      "from": "mix_p2",
+      "from_port": "left",
+      "to": "vca_p2",
+      "to_port": "audio"
+    },
+    {
+      "from": "adsr_p2",
+      "from_port": "envelope",
+      "to": "vca_p2",
+      "to_port": "cv"
+    },
+    {
+      "from": "vca_p2",
+      "from_port": "audio",
+      "to": "rez_p2",
+      "to_port": "audio"
+    },
+    {
+      "from": "rez_p2",
+      "from_port": "audio",
+      "to": "mix_main",
+      "to_port": "in3"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "melody_p3_bot",
+      "to_port": "gate"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "melody_p3_mid",
+      "to_port": "gate"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "melody_p3_top",
+      "to_port": "gate"
+    },
+    {
+      "from": "clock_pad",
+      "from_port": "gate",
+      "to": "adsr_p3",
+      "to_port": "gate"
+    },
+    {
+      "from": "melody_p3_bot",
+      "from_port": "frequency",
+      "to": "osc_p3_bot",
+      "to_port": "frequency"
+    },
+    {
+      "from": "melody_p3_mid",
+      "from_port": "frequency",
+      "to": "osc_p3_mid",
+      "to_port": "frequency"
+    },
+    {
+      "from": "melody_p3_top",
+      "from_port": "frequency",
+      "to": "osc_p3_top",
+      "to_port": "frequency"
+    },
+    {
+      "from": "lfo_p3",
+      "from_port": "out",
+      "to": "osc_p3_bot",
+      "to_port": "fm"
+    },
+    {
+      "from": "lfo_p3",
+      "from_port": "out",
+      "to": "osc_p3_mid",
+      "to_port": "fm"
+    },
+    {
+      "from": "lfo_p3",
+      "from_port": "out",
+      "to": "osc_p3_top",
+      "to_port": "fm"
+    },
+    {
+      "from": "osc_p3_bot",
+      "from_port": "audio",
+      "to": "mix_p3",
+      "to_port": "in1"
+    },
+    {
+      "from": "osc_p3_mid",
+      "from_port": "audio",
+      "to": "mix_p3",
+      "to_port": "in2"
+    },
+    {
+      "from": "osc_p3_top",
+      "from_port": "audio",
+      "to": "mix_p3",
+      "to_port": "in3"
+    },
+    {
+      "from": "mix_p3",
+      "from_port": "left",
+      "to": "vca_p3",
+      "to_port": "audio"
+    },
+    {
+      "from": "adsr_p3",
+      "from_port": "envelope",
+      "to": "vca_p3",
+      "to_port": "cv"
+    },
+    {
+      "from": "vca_p3",
+      "from_port": "audio",
+      "to": "rez_p3",
+      "to_port": "audio"
+    },
+    {
+      "from": "rez_p3",
+      "from_port": "audio",
+      "to": "mix_main",
+      "to_port": "in4"
+    },
+    {
+      "from": "mix_main",
+      "from_port": "left",
+      "to": "reverb",
+      "to_port": "left"
+    },
+    {
+      "from": "mix_main",
+      "from_port": "right",
+      "to": "reverb",
+      "to_port": "right"
+    },
+    {
+      "from": "reverb",
+      "from_port": "left",
+      "to": "dac",
+      "to_port": "audio_left"
+    },
+    {
+      "from": "reverb",
+      "from_port": "right",
+      "to": "dac",
+      "to_port": "audio_right"
+    }
+  ]
+}
