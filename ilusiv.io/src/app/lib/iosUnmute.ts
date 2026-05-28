@@ -4,8 +4,8 @@
 //
 // Usage:
 //   1. Call primeMediaAudio() synchronously from the user gesture (e.g. click).
-//   2. Pass getMediaAudioContext() to Chuck.init as the AudioContext.
-//   3. Connect Chuck to getMediaSinkNode() instead of ctx.destination.
+//   2. Pass getMediaAudioContext() to the audio player as the AudioContext.
+//   3. Connect the player to getMediaSinkNode() instead of ctx.destination.
 
 type Sink = {
   ctx: AudioContext;

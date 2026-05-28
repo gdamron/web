@@ -1,9 +1,9 @@
 "use client";
 
-import ChuckButton from "./ChuckButton";
+import FugueButton from "./FugueButton";
 
 const MusicBox = () => {
-  return <ChuckButton />;
+  return <FugueButton />;
 };
 
 export default MusicBox;

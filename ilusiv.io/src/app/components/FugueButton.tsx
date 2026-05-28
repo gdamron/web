@@ -7,7 +7,7 @@ import { getMediaAudioContext, getMediaSinkNode } from "../lib/iosUnmute";
 
 const MUSIC_BOX_URL = "/fugue/music_box.json";
 
-const ChuckButton = () => {
+const FugueButton = () => {
   const playerRef = useRef<FuguePlayerInstance | null>(null);
   const loadPromiseRef = useRef<Promise<FuguePlayerInstance> | null>(null);
   const [btnState, setBtnState] = useState<PlayState>(PlayState.NOT_PLAYING);
@@ -94,4 +94,4 @@ const ChuckButton = () => {
   return <PlayButton onStateChanged={setBtnState} />;
 };
 
-export default ChuckButton;
+export default FugueButton;
