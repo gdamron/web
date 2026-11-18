@@ -1,31 +1,24 @@
-"use client";
+import type { Metadata } from "next";
+import { ContactForm } from "../components/ContactForm";
+import { contact } from "../content/home";
 
-import { ContactForm, FormData } from "../components/ContactForm";
+export const metadata: Metadata = { title: "Contact" };
 
-const Contact = () => {
-  const onSubmit = async (data: FormData) => {
-    const res = await fetch("api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (res.status >= 400) {
-      const json = await res.json();
-      console.error("Error sending email");
-      console.error(json);
-    }
-  };
-
-  return (
-    <main>
-      <div className="flex justify-center">
-        <div className="flex justify-center pt-16 pb-24 px-8 sm:w-4/5 md:w-3/4 lg:w-1/2 2xl:w-2/5">
-          <ContactForm onSubmit={onSubmit} />
-        </div>
-      </div>
-    </main>
-  );
-};
+const Contact = () => (
+  <main
+    id="content"
+    className="page-column page-shell grid gap-x-12 gap-y-10 lg:grid-cols-12"
+  >
+    <div className="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
+      <h1 className="page-heading">{contact.heading}</h1>
+      <p className="mt-6 max-w-[32ch] text-xl leading-snug sm:text-2xl sm:leading-snug">
+        {contact.body}
+      </p>
+    </div>
+    <div className="lg:col-span-6 lg:col-start-7">
+      <ContactForm />
+    </div>
+  </main>
+);
 
 export default Contact;

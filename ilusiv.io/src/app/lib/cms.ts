@@ -1,14 +1,20 @@
 const { CMS_BASE_URL, CMS_API_TOKEN } = process.env;
 
-// Fetches from the content API. A failed or malformed response yields
-// undefined, so a page renders without that content instead of failing.
+// Fetches from the content API, and throws when the request fails. A page
+// whose own content this is lets that through: a failed refresh then keeps
+// the last good copy of the page instead of caching an empty one.
+const requireContent = async <T>(path: string): Promise<T> => {
+  const res = await fetch(`${CMS_BASE_URL}${path}`, {
+    headers: { Authorization: `Bearer ${CMS_API_TOKEN}` },
+  });
+  if (!res.ok) throw new Error(`Content request failed: ${res.status}`);
+  return (await res.json()) as T;
+};
+
+// The same, for content a page can do without: a failure yields undefined.
 const fetchContent = async <T>(path: string): Promise<T | undefined> => {
   try {
-    const res = await fetch(`${CMS_BASE_URL}${path}`, {
-      headers: { Authorization: `Bearer ${CMS_API_TOKEN}` },
-    });
-    if (!res.ok) throw new Error(`Content request failed: ${res.status}`);
-    return (await res.json()) as T;
+    return await requireContent<T>(path);
   } catch (error) {
     console.error("Unable to load content", error);
     return undefined;
@@ -21,6 +27,8 @@ export type Project = {
   summary?: string;
   image: string;
   slug: string;
+  // Markdown for the project's own page.
+  body?: string;
   // External URLs for the project, such as its own website.
   links?: string[];
   // Contentful tag ids, such as "hero" or "featured".
@@ -49,13 +57,48 @@ export const fetchProjects = async (): Promise<Project[]> => {
     .sort((lhs, rhs) => Date.parse(rhs.date) - Date.parse(lhs.date));
 };
 
-type PageResponse = { fields?: { title: string; body: string } };
+// One project by its slug, or undefined when there is none. Throws when the
+// content API cannot say either way.
+export const fetchProject = async (
+  slug: string,
+): Promise<Project | undefined> => {
+  const response = await requireContent<ProjectsResponse>(
+    `?select=fields,metadata&content_type=project&fields.slug=${encodeURIComponent(slug)}`,
+  );
+  const item = response.items?.[0];
+  if (!item) return undefined;
+  return {
+    ...item.fields,
+    tags: (item.metadata?.tags ?? []).map(({ sys }) => sys.id),
+  };
+};
+
+export type Page = {
+  title: string;
+  body: string;
+  // A line that introduces the page, shown under its heading.
+  summary?: string;
+  image?: string;
+};
+
+type PageResponse = { fields?: Partial<Page> };
+
+// A page entry: markdown with a title and, for some pages, a summary or an
+// image. Throws
+// when the content API fails.
+export const fetchPage = async (entryId: string): Promise<Page> => {
+  const response = await requireContent<PageResponse>(`/${entryId}`);
+  return {
+    title: response.fields?.title ?? "",
+    body: response.fields?.body ?? "",
+    summary: response.fields?.summary,
+    image: response.fields?.image,
+  };
+};
 
 // The markdown body of a page entry, such as the landing page's hero.
-export const fetchPageBody = async (entryId: string): Promise<string> => {
-  const response = await fetchContent<PageResponse>(`/${entryId}`);
-  return response?.fields?.body ?? "";
-};
+export const fetchPageBody = async (entryId: string): Promise<string> =>
+  (await fetchPage(entryId)).body;
 
 export type List = {
   title: string;

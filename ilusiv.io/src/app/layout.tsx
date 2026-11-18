@@ -18,7 +18,7 @@ const specialElite = Special_Elite({
 });
 
 export const metadata: Metadata = {
-  title: "ilusiv",
+  title: { default: "ilusiv", template: "%s · ilusiv" },
   description:
     "A software studio that builds fyūg, a tool for composing generative music, and takes on consulting work in music, media and creator tools.",
 };

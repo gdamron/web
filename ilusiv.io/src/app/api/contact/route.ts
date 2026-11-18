@@ -1,39 +1,42 @@
 import { Resend } from "resend";
-import { FormData } from "../../components/ContactForm";
+import { parseContactMessage } from "../../lib/contact";
 
-const { EMAIL_TOKEN, EMAIL_FROM, EMAIL_TO } = process.env;
+// The largest request worth reading: a full-length message with room to spare.
+const MAX_BODY_BYTES = 16 * 1024;
 
-if (!EMAIL_TOKEN) {
-  throw new Error("EMAIL_TOKEN not found in environment");
-}
-
-if (!EMAIL_FROM) {
-  throw new Error("EMAIL_FROM not found in environment");
-}
-
-if (!EMAIL_TO) {
-  throw new Error("EMAIL_TO not found in environment");
-}
-
-const emailClient = new Resend(EMAIL_TOKEN);
+const failure = (status: number) => Response.json({ ok: false }, { status });
 
 export const POST = async (req: Request) => {
-  const json = (await req.json()) as FormData;
+  const { EMAIL_TOKEN, EMAIL_FROM, EMAIL_TO } = process.env;
+  if (!EMAIL_TOKEN || !EMAIL_FROM || !EMAIL_TO) {
+    console.error("Contact email is not configured");
+    return failure(500);
+  }
 
-  const { data, error } = await emailClient.emails.send({
+  let input: unknown;
+  try {
+    const text = await req.text();
+    if (text.length > MAX_BODY_BYTES) return failure(413);
+    input = JSON.parse(text);
+  } catch {
+    return failure(400);
+  }
+
+  const message = parseContactMessage(input);
+  if (!message) return failure(400);
+
+  const { error } = await new Resend(EMAIL_TOKEN).emails.send({
     from: EMAIL_FROM,
     to: [EMAIL_TO],
-    subject: `[Contact Form] ${json.subject}`,
-    text: `name: ${json.name}\n\nemail: ${json.email}\n\nmessage: ${json.message}`,
+    reply_to: message.email,
+    subject: `[Contact Form] ${message.subject}`,
+    text: `name: ${message.name}\n\nemail: ${message.email}\n\nmessage: ${message.message}`,
   });
 
   if (error) {
     console.error(error);
-    return Response.json(
-      { name: error.name, message: error.message },
-      { status: 500 },
-    );
+    return failure(502);
   }
 
-  return Response.json(data, { status: 200 });
+  return Response.json({ ok: true });
 };

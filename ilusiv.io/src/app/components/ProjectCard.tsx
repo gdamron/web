@@ -1,53 +1,40 @@
-"use client";
-
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import type { Project } from "../lib/cms";
+import { leadSentences } from "../lib/text";
 
 type ProjectCardProps = {
-  date: string;
-  title: string;
-  slug: string;
-  summary?: string;
-  image: string;
+  project: Pick<Project, "slug" | "title" | "summary" | "image">;
+  // The heading level that fits where the card sits.
+  level?: "h2" | "h3";
 };
 
-const ProjectCard = ({
-  date,
-  title,
-  slug,
-  summary,
-  image,
-}: ProjectCardProps) => {
-  const router = useRouter();
-
+// A project as an image, its title and the start of its summary. The whole
+// card is the link.
+const ProjectCard = ({ project, level: Title = "h2" }: ProjectCardProps) => {
+  const { slug, title, summary, image } = project;
   return (
-    <div
-      className="flex flex-col rounded-lg overflow-scroll hover:border-accent border-transparent border-[1px] transition md:shadow-md hover:cursor-pointer"
-      onClick={() => router.push(`/projects/${slug}`)}
-    >
-      <div className="h-48 overflow-hidden">
+    <article className="group relative">
+      <div className="project-image aspect-[3/2]">
         <Image
-          className="rounded-b-lg md:rounded-b-none w-full h-48 object-cover"
           src={image}
-          alt={title}
-          width={1920}
-          height={1080}
+          alt=""
+          width={768}
+          height={512}
+          sizes="(min-width: 1024px) 340px, (min-width: 640px) 45vw, 100vw"
         />
       </div>
-      <div className="flex-1 flex flex-col p-2 pt-4">
-        <span>
-          <h2 className="text-xl mb-2 font-semibold line-clamp-1">{title}</h2>
-        </span>
-        <p className="text-sm leading-relaxed line-clamp-4">{summary}</p>
-        <div className="flex-1" />
-        <div className="flex items-center justify-between h-6 pt-6 pb-4">
-          <p className="h-6 text-sm font-semibold text-gray-400">
-            {date.split("-")[0]}
-          </p>
-          <p className="h-6 text-sm font-semibold text-accent px-1">more ›</p>
-        </div>
-      </div>
-    </div>
+      <Title className="mt-5 font-headline text-2xl leading-tight">
+        <Link href={`/projects/${slug}`} className="stretched-link">
+          {title}
+        </Link>
+      </Title>
+      {summary && (
+        <p className="mt-3 line-clamp-4 text-pretty leading-relaxed">
+          {leadSentences(summary, 180)}
+        </p>
+      )}
+    </article>
   );
 };
 

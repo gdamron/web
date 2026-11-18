@@ -25,6 +25,8 @@ export const tags = {
 
 export const work = {
   heading: "Work",
+  // The work page's heading and the line under it come from this entry.
+  entryId: "7jKlxkgJnCHErdjBN1JLdT",
   // The most featured projects the landing page shows at once.
   count: 3,
 };
