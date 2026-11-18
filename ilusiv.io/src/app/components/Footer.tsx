@@ -12,10 +12,7 @@ const siteLinks = [
   { name: "Contact", path: "/contact" },
 ];
 
-const elsewhere = [
-  { name: "GitHub", href: links.github },
-  { name: "LinkedIn", href: links.linkedin },
-];
+const elsewhere = [{ name: "GitHub", href: links.github }];
 
 const Footer = () => {
   const pathname = usePathname();
