@@ -5,25 +5,34 @@ import P5Sketch from "./P5Sketch";
 import { PLAY_EVENT } from "./MusicPlayer";
 import P5 from "p5";
 
-// Each grain draws a line that trails behind it and fades along its length,
-// so every line comes and goes on its own.
-const TRAIL = 150;
-// The trail is stroked in bands, each fainter than the one before it.
-const BANDS = 10;
-const BAND = TRAIL / BANDS;
+// Each grain leaves a faint stroke as it moves. The strokes build up on a
+// hidden canvas, so paths that many grains share become currents.
+//
+// The build-up fades, or it would fill in. An 8-bit canvas cannot fade by a
+// little every frame (the faintest strokes round back to where they were), so
+// it fades by a lot every FADE_EVERY frames, and in between the picture is
+// shown dimmed by however much of that fade is due. The two meet exactly, so
+// what is seen fades continuously.
+const FADE_EVERY = 90;
+const FADE_AMOUNT = 0.3;
 
 // Grains per pixel of canvas, so a phone's field is as open as a desktop's.
-const GRAIN_DENSITY = 1 / 1800;
-const MIN_GRAINS = 200;
-const MAX_GRAINS = 800;
+const GRAIN_DENSITY = 1 / 1400;
+const MIN_GRAINS = 220;
+const MAX_GRAINS = 1024;
 
 // A grain lives this many frames, then starts again somewhere else. Without
 // that, the field gathers every grain into a few places and empties the rest.
-const MIN_LIFE = 400;
-const MAX_LIFE = 1100;
+const MIN_LIFE = 300;
+const MAX_LIFE = 900;
 
 // Grains set off a few at a time, so the field arrives gradually.
-const ENTRANCE_FRAMES = 150;
+const ENTRANCE_FRAMES = 120;
+
+// A grain's stroke comes in over its first frames and goes out over its
+// last, in this many steps of strength, so no line starts or stops abruptly.
+const EASE_FRAMES = 90;
+const EASE_LEVELS = 6;
 
 const MIN_SPEED = 1.4;
 const MAX_SPEED = 3.5;
@@ -31,49 +40,47 @@ const MAX_SPEED = 3.5;
 const CALM_T_INCR = 0.00014;
 const PLAYING_T_INCR = 0.00063;
 
-// The lines read differently on white than on black, so each has its own
-// color and strength (the alpha at the head of a line).
-const ON_DARK = { rgb: "255, 51, 255", alpha: 0.3 };
-const ON_LIGHT = { rgb: "221, 34, 221", alpha: 0.26 };
+// The strokes read differently on white than on black, so each has its own
+// color and strength.
+const STROKE_ON_DARK = "rgba(255, 51, 255, 0.06)";
+const STROKE_ON_LIGHT = "rgba(221, 34, 221, 0.1)";
 
-const palette = () =>
+const strokeColor = () =>
   window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? ON_DARK
-    : ON_LIGHT;
+    ? STROKE_ON_DARK
+    : STROKE_ON_LIGHT;
 
 class Grain {
-  // The last TRAIL positions, newest at `head`.
-  xs = new Float32Array(TRAIL);
-  ys = new Float32Array(TRAIL);
-  head = 0;
-  count = 0;
   x = 0;
   y = 0;
+  // Where it was a frame ago; each frame strokes from there to here.
+  px = 0;
+  py = 0;
   vx = 0;
   vy = 0;
   maxSpeed = MIN_SPEED;
   // Frames to wait before setting off.
   wait = 0;
   life = 0;
-  // Once a grain stops, its line keeps aging by this many frames until it is
-  // gone.
-  aged = 0;
-  stopped = false;
+  age = 0;
+  // How strongly it strokes this frame, from 0 to EASE_LEVELS.
+  level = 0;
 
   start(width: number, height: number, wait: number) {
-    this.x = Math.random() * width;
-    this.y = Math.random() * height;
+    this.x = this.px = Math.random() * width;
+    this.y = this.py = Math.random() * height;
     this.vx = 0;
     this.vy = 0;
     this.maxSpeed = MIN_SPEED + Math.random() * (MAX_SPEED - MIN_SPEED);
     this.wait = wait;
     this.life = MIN_LIFE + Math.random() * (MAX_LIFE - MIN_LIFE);
-    this.count = 0;
-    this.aged = 0;
-    this.stopped = false;
+    this.age = 0;
+    this.level = 0;
   }
 
   move(ax: number, ay: number) {
+    this.px = this.x;
+    this.py = this.y;
     this.vx += ax;
     this.vy += ay;
     const speed = Math.hypot(this.vx, this.vy);
@@ -83,10 +90,10 @@ class Grain {
     }
     this.x += this.vx;
     this.y += this.vy;
-    this.head = (this.head + 1) % TRAIL;
-    this.xs[this.head] = this.x;
-    this.ys[this.head] = this.y;
-    if (this.count < TRAIL) this.count += 1;
+    this.age += 1;
+    this.life -= 1;
+    const ease = Math.min(1, this.age / EASE_FRAMES, this.life / EASE_FRAMES);
+    this.level = Math.ceil(Math.max(0, ease) * EASE_LEVELS);
   }
 }
 
@@ -98,7 +105,9 @@ const createFlowState = () => ({
   tIncr: CALM_T_INCR,
   circleDiv: 3.5,
   flowMag: 0.7,
-  palette: ON_LIGHT,
+  frame: 0,
+  // Where the strokes build up; `render` copies it to the visible canvas.
+  layer: null as CanvasRenderingContext2D | null,
 });
 
 const FlowField = () => {
@@ -116,7 +125,19 @@ const FlowField = () => {
 
   const setup = useCallback(
     (p: P5) => {
-      FLOW_STATE.palette = palette();
+      const visible = (p.drawingContext as CanvasRenderingContext2D).canvas;
+      const canvas = document.createElement("canvas");
+      canvas.width = visible.width;
+      canvas.height = visible.height;
+      const layer = canvas.getContext("2d");
+      if (layer) {
+        layer.scale(visible.width / p.width, visible.height / p.height);
+        layer.lineWidth = 1;
+        layer.strokeStyle = strokeColor();
+      }
+      FLOW_STATE.layer = layer;
+      FLOW_STATE.frame = 0;
+
       const count = Math.min(
         MAX_GRAINS,
         Math.max(MIN_GRAINS, Math.round(p.width * p.height * GRAIN_DENSITY)),
@@ -131,9 +152,21 @@ const FlowField = () => {
     [FLOW_STATE],
   );
 
-  // Moves every grain one frame along the field.
+  // Moves every grain one frame along the field and strokes where it went.
   const step = useCallback(
     (p: P5) => {
+      const { layer } = FLOW_STATE;
+      if (!layer) return;
+
+      FLOW_STATE.frame += 1;
+      if (FLOW_STATE.frame % FADE_EVERY === 0) {
+        layer.save();
+        layer.globalCompositeOperation = "destination-out";
+        layer.fillStyle = `rgba(0, 0, 0, ${FADE_AMOUNT})`;
+        layer.fillRect(0, 0, p.width, p.height);
+        layer.restore();
+      }
+
       FLOW_STATE.tNoise += FLOW_STATE.tIncr;
       const { circleDiv, flowMag, grains, rad, tNoise, xyIncr } = FLOW_STATE;
 
@@ -142,60 +175,55 @@ const FlowField = () => {
           grain.wait -= 1;
           continue;
         }
-        if (grain.stopped) {
-          grain.aged += 1;
-          if (grain.aged >= TRAIL) grain.start(p.width, p.height, 0);
-          continue;
-        }
 
         const row = Math.floor(grain.x / rad);
         const col = Math.floor(grain.y / rad);
         const angle =
           p.noise(col * xyIncr, row * xyIncr, tNoise) * p.TWO_PI * circleDiv;
         grain.move(Math.cos(angle) * flowMag, Math.sin(angle) * flowMag);
+      }
 
-        grain.life -= 1;
+      // One stroke per level of strength, each holding every grain at it.
+      for (let level = 1; level <= EASE_LEVELS; level++) {
+        layer.globalAlpha = level / EASE_LEVELS;
+        layer.beginPath();
+        for (const grain of grains) {
+          if (grain.wait > 0 || grain.level !== level) continue;
+          layer.moveTo(grain.px, grain.py);
+          layer.lineTo(grain.x, grain.y);
+        }
+        layer.stroke();
+      }
+      layer.globalAlpha = 1;
+
+      for (const grain of grains) {
+        if (grain.wait > 0) continue;
         const gone =
           grain.x < 0 || grain.x > p.width || grain.y < 0 || grain.y > p.height;
-        if (gone || grain.life <= 0) grain.stopped = true;
+        if (gone || grain.life <= 0) grain.start(p.width, p.height, 0);
       }
     },
     [FLOW_STATE],
   );
 
-  // Redraws every line from scratch: one stroke per band of the trail, each
-  // band fainter than the one nearer the grain.
+  // Shows the build-up, dimmed by the share of the next fade that is due.
   const render = useCallback(
     (p: P5) => {
+      const { frame, layer } = FLOW_STATE;
+      if (!layer) return;
       const context = p.drawingContext as CanvasRenderingContext2D;
-      const { grains, palette } = FLOW_STATE;
+      const due = (frame % FADE_EVERY) / FADE_EVERY;
       context.clearRect(0, 0, p.width, p.height);
-      context.lineWidth = 1;
-
-      for (let band = 0; band < BANDS; band++) {
-        const strength = Math.pow(1 - band / BANDS, 1.6);
-        context.strokeStyle = `rgba(${palette.rgb}, ${palette.alpha * strength})`;
-        context.beginPath();
-        for (const grain of grains) {
-          // Positions are numbered from the newest; a stopped grain's are
-          // older by `aged`. Bands share their end points so the line joins.
-          const from = Math.max(0, band * BAND - grain.aged);
-          const to = Math.min(grain.count - 1, (band + 1) * BAND - grain.aged);
-          if (to - from < 1) continue;
-          for (let k = from; k <= to; k++) {
-            const i = (grain.head - k + TRAIL) % TRAIL;
-            if (k === from) context.moveTo(grain.xs[i], grain.ys[i]);
-            else context.lineTo(grain.xs[i], grain.ys[i]);
-          }
-        }
-        context.stroke();
-      }
+      context.save();
+      context.globalAlpha = Math.pow(1 - FADE_AMOUNT, due);
+      context.drawImage(layer.canvas, 0, 0, p.width, p.height);
+      context.restore();
     },
     [FLOW_STATE],
   );
 
   return (
-    <P5Sketch setup={setup} step={step} render={render} stillFrames={300} />
+    <P5Sketch setup={setup} step={step} render={render} stillFrames={400} />
   );
 };
 
