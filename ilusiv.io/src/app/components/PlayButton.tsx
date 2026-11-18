@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { useInverseAt } from "../lib/useInverseAt";
 import { useMusicPlayer } from "./MusicPlayer";
 
 const PlayIcon = () => (
@@ -25,69 +27,178 @@ const StopIcon = () => (
   </svg>
 );
 
-const PlayButton = ({ className = "w-16" }: { className?: string }) => {
-  const { playing, toggle } = useMusicPlayer();
+type PlayButtonProps = {
+  // Sizes and styles the circle.
+  className?: string;
+  // Sizes the clickable area when it should be larger than the circle.
+  hitClassName?: string;
+  // Extra content inside the button, such as a label beside the circle.
+  children?: ReactNode;
+};
+
+const PlayButton = ({
+  className = "w-16",
+  hitClassName = "",
+  children,
+}: PlayButtonProps) => {
+  const { playing, status, toggle } = useMusicPlayer();
+  // The name starts with the words shown beside the button, for voice control.
+  const label = {
+    idle: "Play Music Box",
+    loading: "Loading Music Box, press to cancel",
+    playing: "Playing Music Box, press to stop",
+    error: "Play Music Box",
+  }[status];
 
   return (
     <button
       type="button"
       onClick={toggle}
-      aria-pressed={playing}
-      aria-label={playing ? "Stop Music Box" : "Play Music Box"}
-      className={`play-button flex shrink-0 items-center justify-center rounded-full aspect-square ${className}`}
+      aria-busy={status === "loading"}
+      aria-label={label}
+      title="Music Box, a Fugue invention"
+      className={`group/play flex shrink-0 items-center justify-center rounded-full ${hitClassName}`}
     >
-      {playing ? <StopIcon /> : <PlayIcon />}
+      <span
+        data-playing={playing}
+        data-status={status}
+        className={`play-button relative flex aspect-square shrink-0 items-center justify-center rounded-full ${className}`}
+      >
+        {playing ? <StopIcon /> : <PlayIcon />}
+      </span>
+      {children}
     </button>
   );
 };
 
-// The landing page's own control: the button with the piece named beside it.
-export const HeroPlayer = ({
+// A page's own control: one button holding the circle and the piece's name,
+// with a line that reports loading and failure.
+export const InlinePlayer = ({
   title,
   caption,
 }: {
   title: string;
   caption: string;
 }) => {
-  const { playing, setHeroControlVisible } = useMusicPlayer();
+  const { status, setInlineControlVisible } = useMusicPlayer();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(([entry]) =>
-      setHeroControlVisible(entry.isIntersecting),
+      setInlineControlVisible(entry.isIntersecting),
     );
     observer.observe(el);
     return () => {
       observer.disconnect();
-      setHeroControlVisible(false);
+      setInlineControlVisible(false);
     };
-  }, [setHeroControlVisible]);
+  }, [setInlineControlVisible]);
+
+  const heading = {
+    idle: `Play ${title}`,
+    loading: `Loading ${title}…`,
+    playing: `Playing ${title}`,
+    error: `Play ${title}`,
+  }[status];
 
   return (
-    <div ref={ref} className="flex items-center gap-5">
-      <PlayButton className="w-20" />
-      <p className="leading-snug">
-        <span className="block font-headline text-xl">
-          {playing ? `Playing ${title}` : `Play ${title}`}
+    <div ref={ref}>
+      <PlayButton
+        className="play-button-solid w-16 sm:w-20"
+        hitClassName="gap-5 rounded-none text-left"
+      >
+        <span className="leading-snug">
+          <span className="block font-headline text-2xl">{heading}</span>
+          <span className="mt-1 block max-w-[28ch] opacity-80">
+            {status === "error"
+              ? "The audio couldn't start. Try again."
+              : caption}
+          </span>
         </span>
-        <span className="block text-sm text-muted max-w-[26ch]">{caption}</span>
-      </p>
+      </PlayButton>
     </div>
   );
 };
 
+// What the roaming controls need to decide whether to show. They wait for
+// hydration (so the server render never shows two controls) and step aside
+// while a page's own control is in view.
+const useRoamingState = () => {
+  const { inlineControlVisible } = useMusicPlayer();
+  const [ready, setReady] = useState(false);
+  const [atFooter, setAtFooter] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => setReady(true), []);
+
+  // It also steps aside at the foot of the page, clear of the footer links.
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+    const observer = new IntersectionObserver(([entry]) =>
+      setAtFooter(entry.isIntersecting),
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  return { ready, inlineControlVisible, atFooter };
+};
+
+const ROAMING_NOTE = {
+  idle: "Play Music Box",
+  loading: "Loading Music Box…",
+  playing: "",
+  error: "The audio couldn't start. Try again.",
+};
+
 // Follows the visitor around the site so the music can be stopped anywhere.
+// On small screens the nav bar carries the control instead (NavPlayer).
 export const DockedPlayer = () => {
-  const { heroControlVisible } = useMusicPlayer();
+  const { ready, inlineControlVisible, atFooter } = useRoamingState();
+  const { playing, status } = useMusicPlayer();
+  const inverse = useInverseAt("bottom", 48);
+  // It clears the footer's links, unless music is playing and needs a stop.
+  const visible = ready && !inlineControlVisible && (!atFooter || playing);
+
+  const [introduced, setIntroduced] = useState(false);
+  useEffect(() => {
+    if (status === "playing") setIntroduced(true);
+  }, [status]);
+  // Until the visitor has played it once, a note over the hero says what the
+  // button is. Loading and failure are always reported.
+  const note =
+    status === "idle" && (introduced || inverse) ? "" : ROAMING_NOTE[status];
 
   return (
     <div
-      className={`fixed bottom-0 right-0 z-20 p-6 sm:p-8 transition-opacity duration-300 ${heroControlVisible ? "invisible opacity-0" : "opacity-100"}`}
-      aria-hidden={heroControlVisible}
+      className={`docked-player pointer-events-none fixed bottom-0 right-0 z-20 hidden p-5 transition-opacity xl:p-8 duration-300 sm:block ${inverse ? "theme-inverse" : ""} ${visible ? "opacity-100" : "invisible opacity-0"}`}
+      aria-hidden={!visible}
     >
-      <PlayButton />
+      <PlayButton
+        className="w-16"
+        hitClassName="pointer-events-auto flex-col-reverse !items-end gap-3 rounded-none"
+      >
+        {note && (
+          <span className="play-note hidden min-[1360px]:block">{note}</span>
+        )}
+      </PlayButton>
+    </div>
+  );
+};
+
+export const NavPlayer = () => {
+  const { ready, inlineControlVisible } = useRoamingState();
+  const visible = ready && !inlineControlVisible;
+
+  return (
+    <div
+      className={`transition-opacity duration-300 sm:hidden ${visible ? "opacity-100" : "invisible opacity-0"}`}
+      aria-hidden={!visible}
+    >
+      <PlayButton className="w-9 shadow-none" hitClassName="h-11 w-11" />
     </div>
   );
 };

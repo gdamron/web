@@ -15,8 +15,8 @@ const elsewhere = [
 
 const Footer = () => {
   return (
-    <footer className="theme-inverse border-t border-rule">
-      <div className="page-column flex flex-col gap-8 py-12 pr-28 sm:flex-row sm:justify-between">
+    <footer data-inverse className="theme-inverse border-t border-rule">
+      <div className="page-column flex flex-col gap-8 py-12 sm:flex-row sm:items-baseline sm:justify-between">
         <div>
           <Link href="/" className="font-headline text-2xl">
             (i)lusiv
@@ -25,12 +25,12 @@ const Footer = () => {
             © {new Date().getFullYear()} ilusiv
           </p>
         </div>
-        <ul className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-x-8">
+        <ul className="grid grid-cols-2 gap-x-8 gap-y-1 sm:flex sm:flex-wrap sm:justify-end">
           {siteLinks.map(({ name, path }) => (
             <li key={path}>
               <Link
                 href={path}
-                className="underline-offset-8 decoration-2 decoration-accent hover:underline"
+                className="inline-block py-1.5 underline-offset-8 decoration-2 decoration-accent hover:underline sm:py-0"
               >
                 {name}
               </Link>
@@ -42,10 +42,14 @@ const Footer = () => {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline-offset-8 decoration-2 decoration-accent hover:underline"
+                className="inline-block py-1.5 underline-offset-8 decoration-2 decoration-accent hover:underline sm:py-0"
               >
                 {name}
-                <span className="text-xs"> ↗</span>
+                <span className="text-xs" aria-hidden="true">
+                  {" "}
+                  ↗
+                </span>
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
             </li>
           ))}

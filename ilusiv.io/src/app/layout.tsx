@@ -6,7 +6,6 @@ import Footer from "./components/Footer";
 import { MusicPlayerProvider } from "./components/MusicPlayer";
 import { DockedPlayer } from "./components/PlayButton";
 
-
 const openSans = Open_Sans({
   subsets: ["latin"],
   variable: "--font-open-sans",
@@ -35,6 +34,9 @@ export default function RootLayout({
         className={`tracking-wide font-light ${openSans.className} ${openSans.variable} ${specialElite.variable}`}
       >
         <MusicPlayerProvider>
+          <a href="#content" className="skip-link">
+            Skip to content
+          </a>
           <Navbar />
           {children}
           <Footer />

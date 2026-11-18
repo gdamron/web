@@ -24,12 +24,16 @@ const TRACK = { title: "Music Box", artist: "ilusiv" };
 // React tree (the flow field) can follow the music.
 export const PLAY_EVENT = "ilusiv:playing";
 
+export type PlayerStatus = "idle" | "loading" | "playing" | "error";
+
 type MusicPlayer = {
+  // What the visitor asked for; `status` says how far it has got.
   playing: boolean;
+  status: PlayerStatus;
   toggle: () => void;
-  // The landing page shows its own control; the docked one steps aside for it.
-  heroControlVisible: boolean;
-  setHeroControlVisible: (visible: boolean) => void;
+  // A page can show its own control; the roaming one steps aside for it.
+  inlineControlVisible: boolean;
+  setInlineControlVisible: (visible: boolean) => void;
 };
 
 const MusicPlayerContext = createContext<MusicPlayer | null>(null);
@@ -45,12 +49,16 @@ export const useMusicPlayer = (): MusicPlayer => {
 export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
   const playerRef = useRef<FuguePlayerInstance | null>(null);
   const loadPromiseRef = useRef<Promise<FuguePlayerInstance> | null>(null);
+  const queueRef = useRef<Promise<void>>(Promise.resolve());
   const [playing, setPlaying] = useState(false);
-  const [heroControlVisible, setHeroControlVisible] = useState(false);
+  const [sounding, setSounding] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [inlineControlVisible, setInlineControlVisible] = useState(false);
 
   // Must run inside the click handler: iOS only unlocks audio on a gesture.
   const toggle = useCallback(() => {
     primeMediaAudio();
+    setFailed(false);
     setPlaying((p) => !p);
   }, []);
 
@@ -77,6 +85,9 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
           ...(sinkNode ? { destination: sinkNode } : {}),
           onError(error) {
             console.error("Fugue player error", error);
+            setFailed(true);
+            setSounding(false);
+            setPlaying(false);
           },
         });
 
@@ -95,17 +106,25 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     let cancelled = false;
 
+    // One request at a time: a stop waits for the play before it, so a quick
+    // play-then-stop can never leave audio sounding behind an idle button.
     const control = async () => {
+      if (cancelled) return;
       if (playing) {
         const player = await loadPlayer();
-        if (!cancelled) await player.play();
+        if (cancelled) return;
+        await player.play();
+        if (!cancelled) setSounding(true);
         return;
       }
-      playerRef.current?.stop();
+      setSounding(false);
+      await playerRef.current?.stop();
     };
 
-    control().catch((error) => {
+    queueRef.current = queueRef.current.then(control).catch((error) => {
       console.error("Unable to control Fugue player", error);
+      setFailed(true);
+      setSounding(false);
       setPlaying(false);
     });
 
@@ -124,8 +143,12 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
     const ms = navigator.mediaSession;
     ms.metadata = new window.MediaMetadata(TRACK);
     try {
-      ms.setActionHandler("play", toggle);
-      ms.setActionHandler("pause", toggle);
+      ms.setActionHandler("play", () => {
+        primeMediaAudio();
+        setFailed(false);
+        setPlaying(true);
+      });
+      ms.setActionHandler("pause", () => setPlaying(false));
     } catch {
       // unsupported action
     }
@@ -137,7 +160,7 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
         // ignore
       }
     };
-  }, [toggle]);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -148,14 +171,32 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
     };
   }, []);
 
+  const status: PlayerStatus = failed
+    ? "error"
+    : !playing
+      ? "idle"
+      : sounding
+        ? "playing"
+        : "loading";
+
   const value = useMemo(
-    () => ({ playing, toggle, heroControlVisible, setHeroControlVisible }),
-    [playing, toggle, heroControlVisible],
+    () => ({
+      playing,
+      status,
+      toggle,
+      inlineControlVisible,
+      setInlineControlVisible,
+    }),
+    [playing, status, toggle, inlineControlVisible],
   );
 
   return (
     <MusicPlayerContext.Provider value={value}>
       {children}
+      {/* Every play control reports failure here, wherever it sits. */}
+      <p role="status" className="sr-only">
+        {status === "error" ? "The audio couldn't start. Try again." : ""}
+      </p>
     </MusicPlayerContext.Provider>
   );
 };

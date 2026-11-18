@@ -74,11 +74,20 @@ class Grain {
 const CALM_T_INCR = 0.0002;
 const PLAYING_T_INCR = 0.0009;
 
+// Each stroke is nearly transparent and the lines build up over time. On a
+// white page they need a different weight to read as they do on black.
+const STROKE_ON_DARK = "#ff33ff03";
+const STROKE_ON_LIGHT = "#e633e602";
+
+const strokeColor = () =>
+  window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? STROKE_ON_DARK
+    : STROKE_ON_LIGHT;
+
 const createFlowState = () => ({
   rad: 15.5,
   grainCount: 1024,
   grains: new Array<Grain>(),
-  color: "#ee66ee01",
   tNoise: 0,
   currentNoise: 0,
   xyIncr: 0.025,
@@ -103,8 +112,9 @@ const FlowField = () => {
   const setup = useCallback(
     (p: P5) => {
       FLOW_STATE.grains.length = 0;
+      const color = p.color(strokeColor());
       for (let i = 0; i < FLOW_STATE.grainCount; i++) {
-        FLOW_STATE.grains.push(new Grain(p, p.color(FLOW_STATE.color)));
+        FLOW_STATE.grains.push(new Grain(p, color));
       }
     },
     [FLOW_STATE],

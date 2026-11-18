@@ -50,7 +50,16 @@ const P5Sketch = ({ draw, setup, stillFrames = 0 }: P5SketchProps) => {
     });
     observer.observe(host);
 
+    // Stop drawing while the canvas is scrolled out of view.
+    const visibility = new IntersectionObserver(([entry]) => {
+      if (reduceMotion) return;
+      if (entry.isIntersecting) sketch.loop();
+      else sketch.noLoop();
+    });
+    visibility.observe(host);
+
     return () => {
+      visibility.disconnect();
       observer.disconnect();
       sketch.remove();
     };
