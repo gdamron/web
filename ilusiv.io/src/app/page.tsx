@@ -6,19 +6,10 @@ import { InlinePlayer } from "./components/PlayButton";
 import Reveal from "./components/Reveal";
 import { contact, hero, services, tags, track, work } from "./content/home";
 import { fetchList, fetchPageBody, fetchProjects } from "./lib/cms";
-import { leadSentences } from "./lib/text";
+import { hostname, leadSentences } from "./lib/text";
 import { ExternalArrow, LinkArrow } from "./components/Arrow";
 
 export const revalidate = 60;
-
-// "https://www.example.com/path" reads as "example.com" in a link label.
-const hostname = (url: string) => {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-};
 
 const Home = async () => {
   const [heroBody, projects, serviceList] = await Promise.all([
@@ -220,9 +211,7 @@ const Home = async () => {
           id="contact"
           className="page-column flex scroll-mt-20 flex-col items-center pt-16 text-center sm:pt-32"
         >
-          <h2 className="closing-heading text-balance">
-            {contact.heading}
-          </h2>
+          <h2 className="closing-heading text-balance">{contact.heading}</h2>
           <p className="mt-5 text-balance text-xl sm:text-2xl">
             {contact.body}
           </p>

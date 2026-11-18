@@ -17,6 +17,13 @@ export const LinkArrow = () => (
   </svg>
 );
 
+// Leads a link that goes back up a level.
+export const BackArrow = () => (
+  <svg {...shared} className="back-arrow">
+    <path d="M14 8H2M7 3L2 8l5 5" />
+  </svg>
+);
+
 // Follows a link that opens another site. The word joiner keeps it on the
 // same line as the word before it.
 export const ExternalArrow = ({ className = "" }: { className?: string }) => (

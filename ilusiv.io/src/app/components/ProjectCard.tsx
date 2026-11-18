@@ -1,53 +1,43 @@
-"use client";
-
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import type { Project } from "../lib/cms";
+import { leadSentences } from "../lib/text";
 
 type ProjectCardProps = {
-  date: string;
-  title: string;
-  slug: string;
-  summary?: string;
-  image: string;
+  project: Pick<Project, "slug" | "title" | "summary" | "image">;
+  // The heading level that fits where the card sits.
+  level?: "h2" | "h3";
 };
 
-const ProjectCard = ({
-  date,
-  title,
-  slug,
-  summary,
-  image,
-}: ProjectCardProps) => {
-  const router = useRouter();
-
+// A project as an image, its title and the start of its summary. The whole
+// card is the link. On a phone it is a row with a small image, so a list of
+// them stays short.
+const ProjectCard = ({ project, level: Title = "h2" }: ProjectCardProps) => {
+  const { slug, title, summary, image } = project;
   return (
-    <div
-      className="flex flex-col rounded-lg overflow-scroll hover:border-accent border-transparent border-[1px] transition md:shadow-md hover:cursor-pointer"
-      onClick={() => router.push(`/projects/${slug}`)}
-    >
-      <div className="h-48 overflow-hidden">
+    <article className="group relative grid grid-cols-[6.5rem_1fr] gap-x-4 sm:block">
+      <div className="project-image aspect-square self-start sm:aspect-[3/2]">
         <Image
-          className="rounded-b-lg md:rounded-b-none w-full h-48 object-cover"
           src={image}
-          alt={title}
-          width={1920}
-          height={1080}
+          alt=""
+          width={768}
+          height={512}
+          sizes="(min-width: 1024px) 340px, (min-width: 640px) 45vw, 104px"
         />
       </div>
-      <div className="flex-1 flex flex-col p-2 pt-4">
-        <span>
-          <h2 className="text-xl mb-2 font-semibold line-clamp-1">{title}</h2>
-        </span>
-        <p className="text-sm leading-relaxed line-clamp-4">{summary}</p>
-        <div className="flex-1" />
-        <div className="flex items-center justify-between h-6 pt-6 pb-4">
-          <p className="h-6 text-sm font-semibold text-gray-400">
-            {date.split("-")[0]}
+      <div>
+        <Title className="font-headline text-xl leading-tight sm:mt-5 sm:text-2xl sm:leading-tight">
+          <Link href={`/projects/${slug}`} className="stretched-link">
+            {title}
+          </Link>
+        </Title>
+        {summary && (
+          <p className="mt-2 line-clamp-2 text-pretty leading-relaxed sm:mt-3 sm:line-clamp-4">
+            {leadSentences(summary, 180)}
           </p>
-          <p className="h-6 text-sm font-semibold text-accent px-1">more ›</p>
-        </div>
+        )}
       </div>
-    </div>
+    </article>
   );
 };
 

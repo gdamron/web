@@ -1,30 +1,43 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import ClosingCta from "../components/ClosingCta";
 import Markdown from "../components/Markdown";
+import { fetchPage } from "../lib/cms";
 
-const { CMS_BASE_URL, CMS_API_TOKEN } = process.env;
-const ENTITY_ID = `3OXmFbfeto0KIAIIn4LWfP`;
+const ENTRY_ID = "3OXmFbfeto0KIAIIn4LWfP";
 
 export const revalidate = 60;
 
-type AboutPageResponse = {
-  fields: {
-    title: string;
-    body: string;
-  };
-};
+export const metadata: Metadata = { title: "About" };
 
 const About = async () => {
-  const url = `${CMS_BASE_URL}/${ENTITY_ID}?access_token=${CMS_API_TOKEN}`;
-  const cmsRes = await fetch(url);
-  const { fields } = (await cmsRes.json()) as AboutPageResponse;
-  const { body } = fields;
+  const { body, image } = await fetchPage(ENTRY_ID);
+  // Failing here keeps the last good page in place when content is missing.
+  if (!body) throw new Error("The about page's content is unavailable");
 
   return (
-    <main>
-      <div className="flex justify-center">
-        <div className="py-16 px-8 sm:w-4/5 md:w-3/4 lg:w-3/5">
-          <Markdown source={body} />
+    <main id="content" className="page-column page-shell">
+      <h1 className="page-heading">About</h1>
+      <div className="section-top mt-10 grid items-start gap-x-12 gap-y-10 sm:mt-14 md:grid-cols-12">
+        {image && (
+          <div className="project-image aspect-[4/5] w-full max-w-[16rem] md:sticky md:top-24 md:col-span-4 md:max-w-none">
+            <Image
+              src={image}
+              alt=""
+              width={768}
+              height={960}
+              priority
+              sizes="(min-width: 1152px) 340px, (min-width: 768px) 33vw, 256px"
+            />
+          </div>
+        )}
+        <div
+          className={`prose-body ${image ? "md:col-span-8" : "md:col-span-12"}`}
+        >
+          <Markdown source={body} demoteHeadings />
         </div>
       </div>
+      <ClosingCta className="section-top mt-20 sm:mt-28" />
     </main>
   );
 };

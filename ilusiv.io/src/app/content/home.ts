@@ -25,6 +25,8 @@ export const tags = {
 
 export const work = {
   heading: "Work",
+  // The work page's heading and the line under it come from this entry.
+  entryId: "7jKlxkgJnCHErdjBN1JLdT",
   // The most featured projects the landing page shows at once.
   count: 3,
 };
@@ -32,6 +34,8 @@ export const contact = {
   heading: "Building something amazing?",
   body: "Tell us what you're working on and how ilusiv can help.",
   action: "Start a conversation",
+  // What to expect after writing in.
+  reply: "Expect a reply within a few days.",
 };
 
 export const links = {

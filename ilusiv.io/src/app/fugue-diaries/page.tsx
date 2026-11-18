@@ -1,86 +1,117 @@
-import Parser from "rss-parser";
-import IlusivH1 from "../components/IlusivH1";
+import type { Metadata } from "next";
 import Image from "next/image";
+import Parser from "rss-parser";
+import { ExternalArrow } from "../components/Arrow";
+import ClosingCta from "../components/ClosingCta";
+import { isResizable } from "../components/IlusivImage";
 
 export const revalidate = 3600;
 
-const RSS_URL = "https://fuguediaries.substack.com/feed";
+export const metadata: Metadata = { title: "The Fugue Diaries" };
+
+const SUBSTACK_URL = "https://fuguediaries.substack.com";
 
 type CustomItem = { enclosure?: { url: string } };
-const parser = new Parser<Record<string, never>, CustomItem>({ customFields: { item: ["enclosure"] } });
+const parser = new Parser<Record<string, never>, CustomItem>({
+  customFields: { item: ["enclosure"] },
+});
 
-const formatDate = (dateStr: string): string => {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-};
+const formatDate = (dateStr: string): string =>
+  new Date(dateStr).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
 const FugueDiaries = async () => {
-  const feed = await parser.parseURL(RSS_URL);
+  const feed = await parser.parseURL(`${SUBSTACK_URL}/feed`);
   const items = feed.items.slice(0, 10);
 
   return (
-    <main>
-      <div className="flex justify-center">
-        <div className="py-16 px-8 sm:w-4/5 md:w-3/4 lg:w-3/5 max-w-3xl w-full">
-          <IlusivH1>The Fugue Diaries</IlusivH1>
-          <p className="mb-10">
-            Adventures in agentically coding a generative music platform, creating sound with it,
-            and exploring what comes up in the process.
-          </p>
-          <ul className="flex flex-col gap-8">
-            {items.map(({ title, contentSnippet, link, pubDate, enclosure }) => (
-              <li key={link} className="rounded-lg border-[1px] border-transparent hover:border-accent transition">
-                <a
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex gap-5 items-start"
-                >
-                  {enclosure?.url && (
-                    <Image
-                      src={enclosure.url}
-                      alt={title || "Fugue Diaries Post"}
-                      className="h-28 w-44 object-cover shrink-0 rounded"
-                      width={1920}
-                      height={1080}
-                    />
-                  )}
-                  <div className="flex flex-col gap-1">
-                    {pubDate && <span className="text-xs opacity-50">{formatDate(pubDate)}</span>}
-                    <span className="font-semibold text-lg leading-snug group-hover:underline underline-offset-4 decoration-2 decoration-accent">
-                      {title}
-                    </span>
-                    {contentSnippet && (
-                      <span className="text-sm opacity-70">{contentSnippet}</span>
-                    )}
-                  </div>
-                </a>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-10">
-            <a
-              href="https://fuguediaries.substack.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm"
-            >
-              <span
-                className="h-6 font-semibold text-accent px-1"
+    <main id="content" className="page-column page-shell">
+      <h1 className="page-heading">The Fugue Diaries</h1>
+      <p className="page-lede">
+        Adventures in agentically coding a generative music platform, creating
+        sound with it, and exploring what comes up in the process.
+      </p>
+      <p className="mt-6">
+        <a
+          href={SUBSTACK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-link"
+        >
+          Read on Substack
+          <ExternalArrow />
+          <span className="sr-only"> (opens in a new tab)</span>
+        </a>
+      </p>
+      <ul className="mt-12 border-t border-rule sm:mt-16">
+        {items.map(({ title, contentSnippet, link, pubDate, enclosure }) => {
+          const cover =
+            enclosure?.url && isResizable(enclosure.url)
+              ? enclosure.url
+              : undefined;
+          return (
+            <li key={link} className="border-b border-rule py-6 sm:py-8">
+              <article
+                className={`group relative grid gap-x-4 sm:grid-cols-12 sm:gap-x-10 ${cover ? "grid-cols-[6.5rem_1fr]" : ""}`}
               >
-                Read on substack</span> ↗
-            </a>
-          </div>
-          <div className="mt-12">
-            <iframe
-              src="https://fuguediaries.substack.com/embed"
-              width="480"
-              height="150"
-              className="w-full"
-            />
-          </div>
-        </div>
-      </div>
+                {cover && (
+                  <div className="project-image aspect-square self-start sm:col-span-3 sm:aspect-video">
+                    <Image
+                      src={cover}
+                      alt=""
+                      width={640}
+                      height={360}
+                      sizes="(min-width: 1152px) 250px, (min-width: 640px) 25vw, 100vw"
+                    />
+                  </div>
+                )}
+                <div
+                  className={`self-center ${cover ? "sm:col-span-9" : "sm:col-span-12"}`}
+                >
+                  {pubDate && (
+                    <p className="text-sm text-muted">{formatDate(pubDate)}</p>
+                  )}
+                  <h2 className="mt-1 font-headline text-xl leading-tight sm:mt-2 sm:text-2xl sm:leading-tight lg:text-3xl lg:leading-tight">
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="stretched-link"
+                    >
+                      {title || "Untitled post"}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </h2>
+                  {contentSnippet && (
+                    <p className="mt-3 line-clamp-2 max-w-[60ch] sm:line-clamp-3 text-pretty leading-relaxed">
+                      {contentSnippet}
+                    </p>
+                  )}
+                </div>
+              </article>
+            </li>
+          );
+        })}
+      </ul>
+      <section className="mt-10 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 sm:mt-12">
+        <h2 className="text-balance font-headline text-xl sm:text-2xl lg:text-3xl">
+          Get new posts by email
+        </h2>
+        <a
+          href={`${SUBSTACK_URL}/subscribe`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-link"
+        >
+          Subscribe on Substack
+          <ExternalArrow />
+          <span className="sr-only"> (opens in a new tab)</span>
+        </a>
+      </section>
+      <ClosingCta className="section-top mt-20 sm:mt-28" />
     </main>
   );
 };
