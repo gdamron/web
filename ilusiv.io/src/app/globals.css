@@ -145,7 +145,7 @@ body {
      longer than the hero headline. */
   .closing-heading {
     @apply font-headline;
-    font-size: clamp(2rem, 5vw, 3.75rem);
+    font-size: clamp(1.75rem, 5vw, 3.75rem);
     line-height: 1.08;
   }
 

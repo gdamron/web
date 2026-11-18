@@ -220,10 +220,10 @@ const Home = async () => {
           id="contact"
           className="page-column flex scroll-mt-20 flex-col items-center pt-16 text-center sm:pt-32"
         >
-          <h2 className="closing-heading text-balance max-w-[16ch] sm:max-w-none">
+          <h2 className="closing-heading text-balance">
             {contact.heading}
           </h2>
-          <p className="mt-6 max-w-[40ch] text-balance text-xl sm:text-2xl">
+          <p className="mt-5 text-balance text-xl sm:text-2xl">
             {contact.body}
           </p>
           <Link href="/contact" className="cta-button mt-8">
