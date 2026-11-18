@@ -27,7 +27,7 @@ const Footer = () => {
             (i)lusiv
           </Link>
           <p className="text-sm text-muted">
-            © {new Date().getFullYear()} ilusiv
+            © {new Date().getFullYear()} (i)lusiv
           </p>
         </div>
         <ul className="grid grid-cols-2 gap-x-8 gap-y-1 sm:flex sm:flex-wrap sm:justify-end">

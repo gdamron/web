@@ -31,8 +31,8 @@ export const work = {
   count: 3,
 };
 export const contact = {
-  heading: "Building something amazing?",
-  body: "Tell us what you're working on and how ilusiv can help.",
+  heading: "What are you building?",
+  body: "Tell us where it stands and how (i)lusiv can help.",
   action: "Start a conversation",
   // What to expect after writing in.
   reply: "Expect a reply within a few days.",
