@@ -39,6 +39,5 @@ export const contact = {
 };
 
 export const links = {
-  linkedin: "https://linkedin.com/in/grantdamron",
-  github: "https://github.com/gdamron",
+  github: "https://github.com/Ilusiv-media",
 };
