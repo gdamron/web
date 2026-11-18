@@ -96,8 +96,10 @@ const FugueDiaries = async () => {
           );
         })}
       </ul>
-      <section className="mt-16 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 sm:mt-20">
-        <h2 className="section-heading">Get new posts by email</h2>
+      <section className="mt-10 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 sm:mt-12">
+        <h2 className="text-balance font-headline text-xl sm:text-2xl lg:text-3xl">
+          Get new posts by email
+        </h2>
         <a
           href={`${SUBSTACK_URL}/subscribe`}
           target="_blank"

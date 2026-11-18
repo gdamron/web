@@ -27,3 +27,12 @@ export const slugify = (text: string): string =>
     .trim()
     .replace(/[^\p{L}\p{N}]+/gu, "-")
     .replace(/^-|-$/g, "");
+
+// Markdown reduced to its words, for comparing passages: links become their
+// labels, and emphasis marks and extra spaces are dropped.
+export const plainText = (markdown: string): string =>
+  markdown
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/[*_`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();

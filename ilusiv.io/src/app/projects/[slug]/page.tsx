@@ -7,7 +7,7 @@ import ClosingCta from "../../components/ClosingCta";
 import Markdown from "../../components/Markdown";
 import ProjectCard from "../../components/ProjectCard";
 import { fetchProject, fetchProjects } from "../../lib/cms";
-import { hostname, leadSentences } from "../../lib/text";
+import { hostname, leadSentences, plainText } from "../../lib/text";
 
 export const revalidate = 60;
 
@@ -29,6 +29,11 @@ const ProjectPage = async ({ params }: Props) => {
 
   const { title, image, date, body, summary, links = [] } = project;
   const year = date?.split("-")[0];
+  // The summary introduces the write-up, unless the write-up opens with it.
+  const opening = summary ? leadSentences(summary, 120) : "";
+  const lede = plainText(body ?? "").startsWith(plainText(opening))
+    ? ""
+    : opening;
 
   // The three projects after this one, wrapping around at the end of the list.
   const others = projects.filter(({ slug }) => slug !== project.slug);
@@ -44,10 +49,10 @@ const ProjectPage = async ({ params }: Props) => {
         Work
       </Link>
       <h1 className="page-heading mt-8">{title}</h1>
-      {summary && <p className="page-lede">{leadSentences(summary, 120)}</p>}
+      {lede && <p className="page-lede">{lede}</p>}
 
       {image && (
-        <div className="project-image mt-10 aspect-[3/2] sm:mt-14 sm:aspect-[2/1] lg:aspect-[21/9]">
+        <div className="project-image mt-10 aspect-[3/2] sm:mt-14 sm:aspect-[2/1]">
           <Image
             src={image}
             alt=""
@@ -97,7 +102,7 @@ const ProjectPage = async ({ params }: Props) => {
       {next.length > 0 && (
         <section className="section-top mt-16 sm:mt-24">
           <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
-            <h2 className="section-heading">More work</h2>
+            <h2 className="section-heading">Other work</h2>
             <Link href="/projects" className="group text-link">
               More projects
               <LinkArrow />
