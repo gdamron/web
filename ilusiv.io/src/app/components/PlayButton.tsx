@@ -1,7 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useInverseAt } from "../lib/useInverseAt";
 import { useMusicPlayer } from "./MusicPlayer";
 
@@ -56,7 +55,6 @@ const PlayButton = ({
       onClick={toggle}
       aria-busy={status === "loading"}
       aria-label={label}
-      title="Music Box, a Fugue invention"
       className={`group/play flex shrink-0 items-center justify-center rounded-full ${hitClassName}`}
     >
       <span
@@ -80,21 +78,7 @@ export const InlinePlayer = ({
   title: string;
   caption: string;
 }) => {
-  const { status, setInlineControlVisible } = useMusicPlayer();
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(([entry]) =>
-      setInlineControlVisible(entry.isIntersecting),
-    );
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      setInlineControlVisible(false);
-    };
-  }, [setInlineControlVisible]);
+  const { status } = useMusicPlayer();
 
   const heading = {
     idle: `Play ${title}`,
@@ -104,7 +88,7 @@ export const InlinePlayer = ({
   }[status];
 
   return (
-    <div ref={ref}>
+    <div>
       <PlayButton
         className="play-button-solid w-16 sm:w-20"
         hitClassName="gap-5 rounded-none text-left"
@@ -122,80 +106,62 @@ export const InlinePlayer = ({
   );
 };
 
-// What the roaming controls need to decide whether to show. They wait for
-// hydration (so the server render never shows two controls) and step aside
-// while a page's own control is in view.
-const useRoamingState = () => {
-  const { inlineControlVisible } = useMusicPlayer();
+// The roaming controls wait for hydration, so the server render never shows
+// one in the wrong state.
+const useReady = () => {
   const [ready, setReady] = useState(false);
-  const [atFooter, setAtFooter] = useState(false);
-  const pathname = usePathname();
-
   useEffect(() => setReady(true), []);
-
-  // It also steps aside at the foot of the page, clear of the footer links.
-  useEffect(() => {
-    const footer = document.querySelector("footer");
-    if (!footer) return;
-    const observer = new IntersectionObserver(([entry]) =>
-      setAtFooter(entry.isIntersecting),
-    );
-    observer.observe(footer);
-    return () => observer.disconnect();
-  }, [pathname]);
-
-  return { ready, inlineControlVisible, atFooter };
+  return ready;
 };
 
 const ROAMING_NOTE = {
   idle: "Play Music Box",
   loading: "Loading Music Box…",
   playing: "",
-  error: "The audio couldn't start. Try again.",
+  error: "Couldn't start. Try again.",
 };
 
-// Follows the visitor around the site so the music can be stopped anywhere.
-// On small screens the nav bar carries the control instead (NavPlayer).
+// Follows the visitor around the site so the music can be started or stopped
+// anywhere, alongside a page's own control. It sits in the page margin, so
+// screens too narrow to have one carry the control in the nav bar instead
+// (NavPlayer).
 export const DockedPlayer = () => {
-  const { ready, inlineControlVisible, atFooter } = useRoamingState();
-  const { playing, status } = useMusicPlayer();
-  const inverse = useInverseAt("bottom", 48);
-  // It clears the footer's links, unless music is playing and needs a stop.
-  const visible = ready && !inlineControlVisible && (!atFooter || playing);
+  const visible = useReady();
+  const { status } = useMusicPlayer();
+  // Sampled at the circle's center.
+  const inverse = useInverseAt("bottom", 64);
 
   const [introduced, setIntroduced] = useState(false);
   useEffect(() => {
     if (status === "playing") setIntroduced(true);
   }, [status]);
-  // Until the visitor has played it once, a note over the hero says what the
-  // button is. Loading and failure are always reported.
-  const note =
-    status === "idle" && (introduced || inverse) ? "" : ROAMING_NOTE[status];
+  // Until the visitor has played it once, a note says what the button is.
+  // Loading and failure are always reported.
+  const note = status === "idle" && introduced ? "" : ROAMING_NOTE[status];
 
   return (
     <div
-      className={`docked-player pointer-events-none fixed bottom-0 right-0 z-20 hidden p-5 transition-opacity xl:p-8 duration-300 sm:block ${inverse ? "theme-inverse" : ""} ${visible ? "opacity-100" : "invisible opacity-0"}`}
+      className={`docked-player pointer-events-none fixed bottom-0 right-0 z-20 hidden flex-col items-end gap-3 p-8 transition-opacity duration-300 min-[1400px]:flex ${inverse ? "theme-inverse" : ""} ${visible ? "opacity-100" : "invisible opacity-0"}`}
       aria-hidden={!visible}
     >
-      <PlayButton
-        className="w-16"
-        hitClassName="pointer-events-auto flex-col-reverse !items-end gap-3 rounded-none"
-      >
-        {note && (
-          <span className="play-note hidden min-[1360px]:block">{note}</span>
-        )}
-      </PlayButton>
+      {/* Beside the button, not inside it, so only the circle takes clicks.
+          Screen readers get the same news from the player's status line. */}
+      {note && (
+        <span aria-hidden="true" className="play-note">
+          {note}
+        </span>
+      )}
+      <PlayButton className="w-16" hitClassName="pointer-events-auto" />
     </div>
   );
 };
 
 export const NavPlayer = () => {
-  const { ready, inlineControlVisible } = useRoamingState();
-  const visible = ready && !inlineControlVisible;
+  const visible = useReady();
 
   return (
     <div
-      className={`transition-opacity duration-300 sm:hidden ${visible ? "opacity-100" : "invisible opacity-0"}`}
+      className={`transition-opacity duration-300 min-[1400px]:hidden ${visible ? "opacity-100" : "invisible opacity-0"}`}
       aria-hidden={!visible}
     >
       <PlayButton className="w-9 shadow-none" hitClassName="h-11 w-11" />

@@ -20,7 +20,7 @@ const specialElite = Special_Elite({
 export const metadata: Metadata = {
   title: "ilusiv",
   description:
-    "A software studio that builds Fugue, a tool for composing generative music, and takes on consulting work in music, media and creator tools.",
+    "A software studio that builds fyūg, a tool for composing generative music, and takes on consulting work in music, media and creator tools.",
 };
 
 export default function RootLayout({

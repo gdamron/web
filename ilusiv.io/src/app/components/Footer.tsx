@@ -3,7 +3,7 @@ import { links } from "../content/home";
 
 const siteLinks = [
   { name: "Work", path: "/projects" },
-  { name: "About Grant", path: "/about" },
+  { name: "About", path: "/about" },
   { name: "The Fugue Diaries", path: "/fugue-diaries" },
   { name: "Contact", path: "/contact" },
 ];
@@ -45,7 +45,7 @@ const Footer = () => {
                 className="inline-block py-1.5 underline-offset-8 decoration-2 decoration-accent hover:underline sm:py-0"
               >
                 {name}
-                <span className="text-xs" aria-hidden="true">
+                <span className="ext-arrow" aria-hidden="true">
                   {" "}
                   ↗
                 </span>

@@ -44,8 +44,8 @@ const Home = async () => {
 
   return (
     <main id="content">
-      <section className="relative isolate flex min-h-[100svh] flex-col justify-center">
-        <div className="absolute inset-0 -z-10" aria-hidden="true">
+      <section className="relative isolate flex min-h-[calc(100svh-5rem)] flex-col justify-center">
+        <div className="hero-field absolute inset-0 -z-10" aria-hidden="true">
           <FlowField />
         </div>
         <div className="page-column pb-16 pt-24">
@@ -57,13 +57,10 @@ const Home = async () => {
 
       <div data-inverse className="theme-inverse pb-20 sm:pb-40">
         {feature && (
-          <section
-            id="fugue"
-            className="page-column scroll-mt-20 py-12 sm:pb-12 sm:pt-20"
-          >
+          <section id="fyug" className="page-column scroll-mt-20 pb-12 pt-24">
             <Reveal>
               <div className="group relative grid gap-x-12 gap-y-10 md:grid-cols-12">
-                <div className="project-image order-last aspect-[3/2] md:col-span-7 md:aspect-[4/3]">
+                <div className="project-image order-last aspect-[3/2] md:col-span-7">
                   <Image
                     src={feature.image}
                     alt=""
@@ -99,14 +96,14 @@ const Home = async () => {
                         className="text-link relative z-10"
                       >
                         Visit {hostname(href)}
-                        <span className="text-xs" aria-hidden="true">
+                        <span className="ext-arrow" aria-hidden="true">
                           {"\u00a0↗"}
                         </span>
                         <span className="sr-only"> (opens in a new tab)</span>
                       </a>
                     ))}
                   </p>
-                  <div className="relative z-10 -m-3 mt-9 w-fit p-3 md:mt-auto md:pt-12">
+                  <div className="relative z-10 mt-9 border-t border-rule pt-8 md:mt-auto">
                     <InlinePlayer title={track.title} caption={track.caption} />
                   </div>
                 </div>
@@ -120,41 +117,43 @@ const Home = async () => {
             id="services"
             className="page-column scroll-mt-20 py-12 sm:pb-6 sm:pt-20"
           >
-            <Reveal className="section-top">
-              <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
+            <div className="section-top grid gap-x-12 gap-y-12 lg:grid-cols-12">
+              <Reveal className="lg:sticky lg:top-24 lg:col-span-4 lg:self-start">
                 <h2 className="section-heading">{serviceList.title}</h2>
+                <p className="mt-5 max-w-[30ch] text-xl leading-snug sm:text-2xl sm:leading-snug">
+                  {serviceList.description}
+                </p>
                 <Link
                   href="/contact"
-                  className="group text-link hidden sm:inline"
+                  className="group text-link mt-8 hidden sm:inline-block"
                 >
                   {contact.action}
                   <span aria-hidden="true" className="link-arrow">
                     →
                   </span>
                 </Link>
-              </div>
-              <p className="mt-5 max-w-[52ch] text-xl leading-snug sm:text-2xl sm:leading-snug">
-                {serviceList.description}
-              </p>
-            </Reveal>
-            <ul className="mt-12 grid gap-x-12 gap-y-10 border-rule sm:mt-16 sm:grid-cols-2 lg:grid-cols-4 lg:border-t">
-              {serviceList.items.map(({ title, body }, index) => (
-                <li key={title}>
-                  <Reveal
-                    delay={index * 0.08}
-                    className="h-full border-t border-rule pt-6 lg:border-t-0"
-                  >
-                    <h3 className="font-headline text-2xl">{title}</h3>
-                    <p className="mt-3 leading-relaxed lg:text-lg lg:leading-relaxed">
-                      {body}
-                    </p>
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
+              </Reveal>
+              <ul className="grid gap-x-12 gap-y-10 sm:grid-cols-2 sm:gap-y-14 lg:col-span-8">
+                {serviceList.items.map(({ title, body }, index) => (
+                  <li key={title}>
+                    <Reveal
+                      delay={(index % 2) * 0.08}
+                      className="h-full border-t border-rule pt-6 [li:first-child>&]:border-t-0 [li:first-child>&]:pt-0 sm:[li:nth-child(2)>&]:border-t-0 sm:[li:nth-child(2)>&]:pt-0"
+                    >
+                      <h3 className="font-headline text-2xl lg:text-3xl">
+                        {title}
+                      </h3>
+                      <p className="mt-3 max-w-[36ch] leading-relaxed lg:text-lg lg:leading-relaxed">
+                        {body}
+                      </p>
+                    </Reveal>
+                  </li>
+                ))}
+              </ul>
+            </div>
             <Link
               href="/contact"
-              className="group text-link mt-14 block border-t border-rule pt-6 sm:hidden"
+              className="group text-link mt-10 block sm:hidden"
             >
               {contact.action}
               <span aria-hidden="true" className="link-arrow">
@@ -175,7 +174,7 @@ const Home = async () => {
                 href="/projects"
                 className="group text-link hidden sm:inline"
               >
-                See all {projects.length} projects
+                More projects
                 <span aria-hidden="true" className="link-arrow">
                   →
                 </span>
@@ -227,7 +226,7 @@ const Home = async () => {
               href="/projects"
               className="group text-link mt-16 block border-t border-rule pt-6 sm:hidden"
             >
-              See all {projects.length} projects
+              More projects
               <span aria-hidden="true" className="link-arrow">
                 →
               </span>

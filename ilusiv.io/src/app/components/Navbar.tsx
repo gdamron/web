@@ -12,7 +12,7 @@ import { useInverseAt } from "../lib/useInverseAt";
 // highlighted while in view. Elsewhere they lead to `page`, or back to the
 // landing page's section when there is no page for it.
 const navItems = [
-  { name: "Fugue", section: "fugue" },
+  { name: "fyūg", section: "fyug" },
   { name: "Services", section: "services" },
   { name: "Work", section: "work", page: "/projects" },
   { name: "About", page: "/about" },
@@ -134,22 +134,22 @@ const Navbar = () => {
         <Link href="/" className="font-headline text-2xl">
           (i)lusiv
         </Link>
-        <ul className="hidden sm:flex gap-6 md:gap-8">
-          {links.map(({ name, path, current }) => (
-            <li key={name}>
-              <Link
-                href={path}
-                aria-current={
-                  current ? (onLanding ? "location" : "page") : undefined
-                }
-                className={`${current ? "underline" : "hover:underline"} underline-offset-8 decoration-2 decoration-accent text-lg`}
-              >
-                {name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <div className="flex items-center sm:hidden">
+        <div className="flex items-center sm:gap-5">
+          <ul className="hidden sm:flex gap-6 md:gap-8">
+            {links.map(({ name, path, current }) => (
+              <li key={name}>
+                <Link
+                  href={path}
+                  aria-current={
+                    current ? (onLanding ? "location" : "page") : undefined
+                  }
+                  className={`${current ? "underline" : "hover:underline"} underline-offset-8 decoration-2 decoration-accent text-lg`}
+                >
+                  {name}
+                </Link>
+              </li>
+            ))}
+          </ul>
           <NavPlayer />
           <button
             ref={openRef}
@@ -158,7 +158,7 @@ const Navbar = () => {
             aria-label="Open menu"
             aria-expanded={isMenuOpen}
             aria-controls="site-menu"
-            className="-mr-2.5 flex h-11 w-11 items-center justify-center"
+            className="-mr-2.5 flex h-11 w-11 items-center justify-center sm:hidden"
           >
             <span className="h-6 w-6">
               <MenuIcon />

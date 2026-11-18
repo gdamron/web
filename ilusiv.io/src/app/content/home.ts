@@ -8,7 +8,7 @@ export const hero = {
 // The label beside the play button in the feature block.
 export const track = {
   title: "Music Box",
-  caption: "A Fugue invention, generated live in your browser.",
+  caption: "A fyūg invention, generated live in your browser.",
 };
 
 // The services section is a Contentful list entry.
@@ -24,7 +24,7 @@ export const tags = {
 };
 
 export const work = {
-  heading: "Selected work",
+  heading: "Work",
   // The most featured projects the landing page shows at once.
   count: 3,
 };

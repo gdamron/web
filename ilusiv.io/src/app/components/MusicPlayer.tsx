@@ -31,9 +31,13 @@ type MusicPlayer = {
   playing: boolean;
   status: PlayerStatus;
   toggle: () => void;
-  // A page can show its own control; the roaming one steps aside for it.
-  inlineControlVisible: boolean;
-  setInlineControlVisible: (visible: boolean) => void;
+};
+
+const STATUS_NEWS: Record<PlayerStatus, string> = {
+  idle: "",
+  loading: "Loading Music Box…",
+  playing: "Playing Music Box",
+  error: "The audio couldn't start. Try again.",
 };
 
 const MusicPlayerContext = createContext<MusicPlayer | null>(null);
@@ -53,7 +57,6 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
   const [playing, setPlaying] = useState(false);
   const [sounding, setSounding] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [inlineControlVisible, setInlineControlVisible] = useState(false);
 
   // Must run inside the click handler: iOS only unlocks audio on a gesture.
   const toggle = useCallback(() => {
@@ -84,7 +87,7 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
           ...(mediaCtx ? { audioContext: mediaCtx } : {}),
           ...(sinkNode ? { destination: sinkNode } : {}),
           onError(error) {
-            console.error("Fugue player error", error);
+            console.error("fyūg player error", error);
             setFailed(true);
             setSounding(false);
             setPlaying(false);
@@ -122,7 +125,7 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
     };
 
     queueRef.current = queueRef.current.then(control).catch((error) => {
-      console.error("Unable to control Fugue player", error);
+      console.error("Unable to control fyūg player", error);
       setFailed(true);
       setSounding(false);
       setPlaying(false);
@@ -184,18 +187,16 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
       playing,
       status,
       toggle,
-      inlineControlVisible,
-      setInlineControlVisible,
     }),
-    [playing, status, toggle, inlineControlVisible],
+    [playing, status, toggle],
   );
 
   return (
     <MusicPlayerContext.Provider value={value}>
       {children}
-      {/* Every play control reports failure here, wherever it sits. */}
+      {/* Every play control reports its progress here, wherever it sits. */}
       <p role="status" className="sr-only">
-        {status === "error" ? "The audio couldn't start. Try again." : ""}
+        {STATUS_NEWS[status]}
       </p>
     </MusicPlayerContext.Provider>
   );

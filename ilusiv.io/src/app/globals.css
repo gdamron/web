@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light dark;
   --accent-rgb: #ff00ff;
 }
 
@@ -106,8 +107,33 @@ body {
 
   /* The one filled button: the closing call to action. */
   .cta-button {
-    @apply inline-block rounded-md bg-accent px-10 py-4 text-lg font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none;
-    text-shadow: 0 1px 2px rgb(0 0 0 / 0.45);
+    @apply inline-block rounded-md px-10 py-4 text-lg font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none;
+    /* A shade deeper than the accent, so white text is easy to read on it. */
+    background: #d100d1;
+    text-shadow: 0 1px 1px rgb(0 0 0 / 0.25);
+  }
+
+  /* The arrow after an external link sits high and small, like a mark. */
+  .ext-arrow {
+    font-size: 0.7em;
+    vertical-align: 0.2em;
+  }
+
+  /* The flow field is quieter behind the hero's copy than around it. */
+  .hero-field {
+    mask-image: linear-gradient(
+      180deg,
+      #000 0,
+      rgb(0 0 0 / 0.6) 22%,
+      rgb(0 0 0 / 0.6) 78%,
+      #000
+    );
+  }
+
+  @media (min-width: 768px) {
+    .hero-field {
+      mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.5) 0 45%, #000 70%);
+    }
   }
 
   /* A hairline that opens a section, with its heading set below it. */
@@ -119,7 +145,7 @@ body {
      longer than the hero headline. */
   .closing-heading {
     @apply font-headline;
-    font-size: clamp(2.25rem, 6vw, 4.75rem);
+    font-size: clamp(2rem, 5vw, 3.75rem);
     line-height: 1.08;
   }
 
@@ -184,7 +210,9 @@ body {
 
   .play-button {
     background: color-mix(in srgb, var(--background-rgb) 60%, transparent);
-    @apply border border-rule text-primary shadow-md backdrop-blur-lg transition;
+    /* An edge that holds on black as well as white. */
+    border-color: color-mix(in srgb, var(--foreground-rgb) 45%, transparent);
+    @apply border text-primary shadow-md backdrop-blur-lg transition;
   }
 
   /* A ring that circles the button while the audio engine loads. */
@@ -195,11 +223,6 @@ body {
 
   .group\/play:hover .play-button {
     @apply scale-105 shadow-lg;
-  }
-
-  /* The roaming control needs an edge that holds on black as well as white. */
-  .play-button {
-    border-color: color-mix(in srgb, var(--foreground-rgb) 45%, transparent);
   }
 
   /* A page's own control is filled, so it reads as the thing to press. */
@@ -218,7 +241,15 @@ body {
   .play-note {
     background: color-mix(in srgb, var(--background-rgb) 85%, transparent);
     color: var(--foreground-rgb);
-    @apply max-w-[16rem] rounded-full border border-rule px-4 py-2 text-left text-sm font-normal shadow-md backdrop-blur-lg;
+    @apply relative max-w-[16rem] rounded-full border border-rule px-4 py-2 text-left text-sm font-normal shadow-md backdrop-blur-lg;
+  }
+
+  /* A small pointer from the caption down to the button's center. */
+  .play-note::after {
+    content: "";
+    background: var(--background-rgb);
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    @apply absolute -bottom-[5px] right-[27px] h-2.5 w-2.5 rotate-45 border-b border-r border-rule;
   }
 
   .play-button[data-status="error"] {
@@ -264,7 +295,7 @@ body {
 }
 
 @media (min-width: 640px) {
-.hero-copy p {
+  .hero-copy p {
     font-size: 1.25rem;
   }
 }

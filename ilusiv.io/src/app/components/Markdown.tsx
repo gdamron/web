@@ -24,7 +24,7 @@ const Markdown = ({ source }: { source: string }) => {
           return (
             <a href={href} target="_blank" rel="noopener noreferrer">
               {label}
-              <span className="text-xs text-anchor" aria-hidden="true">
+              <span className="ext-arrow text-anchor" aria-hidden="true">
                 {"\u00a0↗"}
               </span>
               <span className="sr-only"> (opens in a new tab)</span>
