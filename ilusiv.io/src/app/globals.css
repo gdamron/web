@@ -3,18 +3,61 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light dark;
+  --accent-rgb: #ff00ff;
+}
+
+/* Two palettes. The page takes the one the browser asks for; anything inside
+   .theme-inverse takes the other, which sets it apart from the hero. */
+:root {
+  --heading-rgb: #2c3e50;
+  --link-rgb: #d100d1;
   --foreground-rgb: #2c3e50;
   --background-rgb: #ffffff;
   --menu-rgb: #eeeeee;
-  --accent-rgb: #ff00ff;
+  --muted-rgb: #66758a;
+  --rule-rgb: #2c3e5026;
+}
+
+.theme-inverse {
+  --heading-rgb: #ececec;
+  --link-rgb: #ff00ff;
+  --foreground-rgb: #c8c8c8;
+  --background-rgb: #000000;
+  --menu-rgb: #181818;
+  --muted-rgb: #8c8c8c;
+  --rule-rgb: #880088;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --heading-rgb: #ececec;
+    --link-rgb: #ff00ff;
     --foreground-rgb: #c8c8c8;
     --background-rgb: #000000;
     --menu-rgb: #181818;
+    --muted-rgb: #8c8c8c;
+    --rule-rgb: #880088;
   }
+
+  .theme-inverse {
+    --heading-rgb: #2c3e50;
+    --link-rgb: #d100d1;
+    --foreground-rgb: #2c3e50;
+    --background-rgb: #ffffff;
+    --menu-rgb: #eeeeee;
+    --muted-rgb: #66758a;
+    --rule-rgb: #2c3e5026;
+  }
+}
+
+.theme-inverse {
+  color: var(--foreground-rgb);
+  background: var(--background-rgb);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -23,8 +66,270 @@ body {
   line-height: 1.7rem;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent-rgb);
+  outline-offset: 3px;
+}
+
+@layer components {
+  /* Shared column for the nav, every landing section and the footer. */
+  .page-column {
+    @apply mx-auto w-full max-w-6xl px-8 2xl:px-0;
+  }
+
+  .section-heading {
+    @apply font-headline text-4xl leading-tight sm:text-5xl;
+  }
+
+  /* The page's largest type: the hero headline's scale, reused where a
+     section needs the same weight. */
+  .display-heading {
+    @apply font-headline;
+    font-size: clamp(3rem, 7.5vw, 6rem);
+    line-height: 1.02;
+  }
+
+  /* Shown only when focused from the keyboard. */
+  .skip-link {
+    @apply fixed left-4 top-2 z-50 -translate-y-20 rounded-md bg-accent px-4 py-2 font-semibold text-black focus:translate-y-0;
+  }
+
+  a.group:hover .link-arrow {
+    @apply translate-x-1;
+  }
+
+  /* A link whose hit area covers its nearest positioned ancestor, so a whole
+     card is clickable while the link's name stays short. */
+  .stretched-link::after {
+    content: "";
+    @apply absolute inset-0;
+  }
+
+  /* The one filled button: the closing call to action. */
+  .cta-button {
+    @apply inline-block rounded-md px-10 py-4 text-lg font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none;
+    /* A shade deeper than the accent, so white text is easy to read on it. */
+    background: #d100d1;
+    text-shadow: 0 1px 1px rgb(0 0 0 / 0.25);
+  }
+
+  /* The arrow after an external link sits high and small, like a mark. */
+  .ext-arrow {
+    @apply ml-[0.25em] inline-block h-[0.6em] w-[0.6em];
+    vertical-align: 0.3em;
+  }
+
+  /* The flow field is quieter behind the hero's copy than around it. */
+  .hero-field {
+    mask-image: linear-gradient(
+      180deg,
+      #000 0,
+      rgb(0 0 0 / 0.6) 22%,
+      rgb(0 0 0 / 0.6) 78%,
+      #000
+    );
+  }
+
+  @media (min-width: 768px) {
+    .hero-field {
+      mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.5) 0 45%, #000 70%);
+    }
+  }
+
+  /* A hairline that opens a section, with its heading set below it. */
+  .section-top {
+    @apply border-t border-rule pt-12 sm:pt-16;
+  }
+
+  /* The closing question: display type with a smaller floor, since it runs
+     longer than the hero headline. */
+  .closing-heading {
+    @apply font-headline;
+    font-size: clamp(1.75rem, 5vw, 3.75rem);
+    line-height: 1.08;
+  }
+
+  /* The arrow after a link label; it nudges forward with its group. */
+  .link-arrow {
+    @apply ml-2 inline-block h-[0.8em] w-[0.8em] align-[-0.05em] transition-transform duration-300 motion-reduce:transition-none;
+  }
+
+  .site-nav {
+    background: var(--background-rgb);
+  }
+
+  .text-link {
+    @apply font-semibold text-anchor underline-offset-4 decoration-accent hover:underline lg:text-lg;
+  }
+
+  /* Scroll-in motion; see the Reveal component. */
+  .reveal[data-reveal] {
+    transition:
+      opacity 0.7s ease-out,
+      transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .reveal[data-reveal="hidden"] {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
+
+  /* A project image that drifts closer when its link is hovered or focused. */
+  .project-image {
+    @apply overflow-hidden rounded-md bg-menu;
+    box-shadow: 0 0 0 1px
+      color-mix(in srgb, var(--foreground-rgb) 28%, transparent);
+  }
+
+  .project-image img {
+    @apply h-full w-full object-cover;
+    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  /* A card responds when its stretched link is hovered or focused, and not
+     when some other control inside it is. */
+  .group:has(.stretched-link:hover) .project-image img,
+  .group:has(.stretched-link:focus-visible) .project-image img {
+    transform: scale(1.04);
+  }
+
+  /* The "read more" line in a card: decoration that follows the card's link. */
+  .card-cue {
+    @apply font-semibold text-anchor underline-offset-4 decoration-accent lg:text-lg;
+  }
+
+  .group:has(.stretched-link:hover) .card-cue,
+  .group:has(.stretched-link:focus-visible) .card-cue {
+    @apply underline;
+  }
+
+  .group:has(.stretched-link:hover) .card-cue .link-arrow,
+  .group:has(.stretched-link:focus-visible) .card-cue .link-arrow {
+    @apply translate-x-1;
+  }
+
+  .play-button {
+    background: color-mix(in srgb, var(--background-rgb) 60%, transparent);
+    /* An edge that holds on black as well as white. */
+    border-color: color-mix(in srgb, var(--foreground-rgb) 45%, transparent);
+    @apply border text-primary shadow-md backdrop-blur-lg transition;
+  }
+
+  /* A ring that circles the button while the audio engine loads. */
+  .play-button[data-status="loading"]::after {
+    content: "";
+    @apply absolute -inset-px animate-spin rounded-full border-2 border-transparent border-t-accent;
+  }
+
+  .group\/play:hover .play-button {
+    @apply scale-105 shadow-lg;
+  }
+
+  /* A page's own control is filled, so it reads as the thing to press. */
+  .play-button-solid {
+    background: var(--heading-rgb);
+    color: var(--background-rgb);
+    border-color: transparent;
+  }
+
+  .group\/play:hover .play-button-solid,
+  .group\/play:focus-visible .play-button-solid {
+    box-shadow: 0 0 0 2px var(--accent-rgb);
+  }
+
+  /* The roaming control's caption: what it plays, or what went wrong. */
+  .play-note {
+    background: color-mix(in srgb, var(--background-rgb) 85%, transparent);
+    color: var(--foreground-rgb);
+    /* No wider than the page margin it sits in. */
+    max-width: max(9rem, calc((100vw - 68rem) / 2 - 2.5rem));
+    /* The same edge as the button it points to. */
+    border-color: color-mix(in srgb, var(--foreground-rgb) 45%, transparent);
+    @apply relative rounded-3xl border px-4 py-2 text-left text-sm font-normal shadow-md backdrop-blur-lg;
+  }
+
+  /* A small pointer from the caption down to the button's center. */
+  .play-note::after {
+    content: "";
+    background: var(--background-rgb);
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    border-color: inherit;
+    @apply absolute -bottom-[5px] right-[27px] h-2.5 w-2.5 rotate-45 border-b border-r;
+  }
+
+  .play-button[data-status="error"] {
+    @apply border-dashed border-accent;
+  }
+
+  .play-button[data-playing="true"] {
+    @apply border-accent;
+  }
+}
+
+/* Headline type is a step brighter than body text on black, where the
+   typewriter face would otherwise read gray. */
+.font-headline,
+.section-heading,
+.display-heading,
+.closing-heading,
+.hero-copy h1 {
+  color: var(--heading-rgb);
+}
+
+/* Fixed chrome that borrows the inverse palette keeps its own background
+   treatment. Unlayered so it outranks .theme-inverse. */
+.docked-player.theme-inverse {
+  background: transparent;
+}
+
+/* The hero's copy is CMS markdown: its first heading becomes the headline and
+   its paragraphs the lede. Unlayered so it outranks the markdown utilities. */
+.hero-copy h1 {
+  max-width: 13ch;
+  padding: 0 0 1rem;
+  font-size: clamp(3rem, 7.5vw, 6rem);
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.hero-copy p {
+  max-width: 52ch;
+  padding-block: 0.6rem;
+  font-size: 1.125rem;
+  line-height: 1.625;
+}
+
+@media (min-width: 640px) {
+  .hero-copy p {
+    font-size: 1.25rem;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .play-button,
+  .project-image img {
+    transition: none;
+  }
+
+  .group\/play:hover .play-button {
+    transform: none;
+  }
+
+  .group .project-image img {
+    transform: none !important;
   }
 }

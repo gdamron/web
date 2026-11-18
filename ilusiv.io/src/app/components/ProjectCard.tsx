@@ -7,7 +7,7 @@ type ProjectCardProps = {
   date: string;
   title: string;
   slug: string;
-  summary: string;
+  summary?: string;
   image: string;
 };
 

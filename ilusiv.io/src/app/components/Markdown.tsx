@@ -1,27 +1,32 @@
 import Image from "next/image";
+import Link from "next/link";
 import { PropsWithChildren, ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import IlusivImage from "./IlusivImage";
 import IlusivH1 from "./IlusivH1";
 import IlusivQuote from "./IlusivQuote";
+import { ExternalArrow } from "./Arrow";
 
 const Markdown = ({ source }: { source: string }) => {
   return (
     <ReactMarkdown
       components={{
-        a({ href, children }) {
-          const isExternal = href?.startsWith("http");
+        a({ href = "", children }) {
+          const label = (
+            <span className="hover:underline font-semibold decoration-accent text-anchor">
+              {children}
+            </span>
+          );
+          // Internal links navigate on the client, which keeps music playing.
+          if (href.startsWith("/") || href.startsWith("#")) {
+            return <Link href={href}>{label}</Link>;
+          }
           return (
-            <a
-              href={href}
-              target={isExternal ? "_blank" : "_self"}
-              rel="noopener noreferrer"
-            >
-              <span className="hover:underline font-semibold decoration-accent text-accent">
-                {children}
-              </span>
-              {isExternal && <span className="text-xs text-primary"> ↗ </span>}
+            <a href={href} target="_blank" rel="noopener noreferrer">
+              {label}
+              <ExternalArrow className="text-anchor" />
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           );
         },
@@ -46,7 +51,7 @@ const Markdown = ({ source }: { source: string }) => {
           return <h3 className="text-xl font-semibold py-4">{children}</h3>;
         },
         h4({ children }) {
-          return <h3 className="font-medium py-2">{children}</h3>;
+          return <h4 className="font-medium py-2">{children}</h4>;
         },
         li({ children }) {
           return <li className="list-disc pl-2">{children}</li>;
