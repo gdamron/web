@@ -26,7 +26,7 @@
   --background-rgb: #000000;
   --menu-rgb: #181818;
   --muted-rgb: #8c8c8c;
-  --rule-rgb: #c8c8c82e;
+  --rule-rgb: #880088;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -37,7 +37,7 @@
     --background-rgb: #000000;
     --menu-rgb: #181818;
     --muted-rgb: #8c8c8c;
-    --rule-rgb: #c8c8c82e;
+    --rule-rgb: #880088;
   }
 
   .theme-inverse {
@@ -243,7 +243,9 @@ body {
     color: var(--foreground-rgb);
     /* No wider than the page margin it sits in. */
     max-width: max(9rem, calc((100vw - 68rem) / 2 - 2.5rem));
-    @apply relative rounded-3xl border border-rule px-4 py-2 text-left text-sm font-normal shadow-md backdrop-blur-lg;
+    /* The same edge as the button it points to. */
+    border-color: color-mix(in srgb, var(--foreground-rgb) 45%, transparent);
+    @apply relative rounded-3xl border px-4 py-2 text-left text-sm font-normal shadow-md backdrop-blur-lg;
   }
 
   /* A small pointer from the caption down to the button's center. */
@@ -251,7 +253,8 @@ body {
     content: "";
     background: var(--background-rgb);
     clip-path: polygon(100% 0, 100% 100%, 0 100%);
-    @apply absolute -bottom-[5px] right-[27px] h-2.5 w-2.5 rotate-45 border-b border-r border-rule;
+    border-color: inherit;
+    @apply absolute -bottom-[5px] right-[27px] h-2.5 w-2.5 rotate-45 border-b border-r;
   }
 
   .play-button[data-status="error"] {

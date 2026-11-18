@@ -78,7 +78,7 @@ const Home = async () => {
                   </p>
                   <p className="mt-5 flex flex-wrap gap-x-8 gap-y-4">
                     <span aria-hidden="true" className="card-cue">
-                      Read about {feature.title}
+                      Learn more
                       <LinkArrow />
                     </span>
                     {(feature.links ?? []).map((href) => (
@@ -95,7 +95,7 @@ const Home = async () => {
                       </a>
                     ))}
                   </p>
-                  <div className="relative z-10 mt-9 border-t border-rule pt-8 md:mt-12">
+                  <div className="relative z-10 mt-9 md:mt-auto md:pt-12">
                     <InlinePlayer title={track.title} caption={track.caption} />
                   </div>
                 </div>
@@ -220,7 +220,7 @@ const Home = async () => {
           id="contact"
           className="page-column flex scroll-mt-20 flex-col items-center pt-16 text-center sm:pt-32"
         >
-          <h2 className="closing-heading text-balance max-w-[16ch] sm:max-w-[18ch]">
+          <h2 className="closing-heading text-balance max-w-[16ch] sm:max-w-none">
             {contact.heading}
           </h2>
           <p className="mt-6 max-w-[40ch] text-balance text-xl sm:text-2xl">

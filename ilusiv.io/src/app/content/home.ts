@@ -29,8 +29,8 @@ export const work = {
   count: 3,
 };
 export const contact = {
-  heading: "Have something that needs building?",
-  body: "Tell me what you're working on and where it's stuck.",
+  heading: "Building something amazing?",
+  body: "Tell us what you're working on and how ilusiv can help.",
   action: "Start a conversation",
 };
 
