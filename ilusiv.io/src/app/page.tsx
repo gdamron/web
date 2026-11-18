@@ -7,6 +7,7 @@ import Reveal from "./components/Reveal";
 import { contact, hero, services, tags, track, work } from "./content/home";
 import { fetchList, fetchPageBody, fetchProjects } from "./lib/cms";
 import { leadSentences } from "./lib/text";
+import { ExternalArrow, LinkArrow } from "./components/Arrow";
 
 const FlowField = dynamic(() => import("./components/FlowField"), {
   ssr: false,
@@ -82,10 +83,10 @@ const Home = async () => {
                   <p className="mt-5 max-w-[26ch] text-2xl leading-snug">
                     {feature.summary}
                   </p>
-                  <p className="mt-5 flex flex-wrap gap-x-8 gap-y-2 text-lg">
+                  <p className="mt-5 flex flex-wrap gap-x-8 gap-y-4">
                     <span aria-hidden="true" className="card-cue">
                       Read about {feature.title}
-                      <span className="link-arrow">→</span>
+                      <LinkArrow />
                     </span>
                     {(feature.links ?? []).map((href) => (
                       <a
@@ -96,9 +97,8 @@ const Home = async () => {
                         className="text-link relative z-10"
                       >
                         Visit {hostname(href)}
-                        <span className="ext-arrow" aria-hidden="true">
-                          {"\u00a0↗"}
-                        </span>
+                        {"\u00a0"}
+                        <ExternalArrow />
                         <span className="sr-only"> (opens in a new tab)</span>
                       </a>
                     ))}
@@ -128,9 +128,7 @@ const Home = async () => {
                   className="group text-link mt-8 hidden sm:inline-block"
                 >
                   {contact.action}
-                  <span aria-hidden="true" className="link-arrow">
-                    →
-                  </span>
+                  <LinkArrow />
                 </Link>
               </Reveal>
               <ul className="grid gap-x-12 gap-y-10 sm:grid-cols-2 sm:gap-y-14 lg:col-span-8">
@@ -143,7 +141,7 @@ const Home = async () => {
                       <h3 className="font-headline text-2xl lg:text-3xl">
                         {title}
                       </h3>
-                      <p className="mt-3 max-w-[36ch] leading-relaxed lg:text-lg lg:leading-relaxed">
+                      <p className="mt-3 max-w-[36ch] text-pretty leading-relaxed lg:text-lg lg:leading-relaxed">
                         {body}
                       </p>
                     </Reveal>
@@ -156,9 +154,7 @@ const Home = async () => {
               className="group text-link mt-10 block sm:hidden"
             >
               {contact.action}
-              <span aria-hidden="true" className="link-arrow">
-                →
-              </span>
+              <LinkArrow />
             </Link>
           </section>
         )}
@@ -175,16 +171,14 @@ const Home = async () => {
                 className="group text-link hidden sm:inline"
               >
                 More projects
-                <span aria-hidden="true" className="link-arrow">
-                  →
-                </span>
+                <LinkArrow />
               </Link>
             </div>
             <ul className="mt-10 flex flex-col gap-20 sm:mt-16 md:gap-24">
               {featured.map(({ slug, title, summary, image }, index) => (
                 <li key={slug}>
                   <Reveal>
-                    <article className="group relative grid gap-x-12 gap-y-5 md:grid-cols-12">
+                    <article className="group relative grid gap-x-12 gap-y-7 md:grid-cols-12 md:gap-y-5">
                       <div
                         className={`project-image aspect-[3/2] md:col-span-7 ${
                           index % 2 ? "md:order-last" : ""
@@ -207,14 +201,12 @@ const Home = async () => {
                             {title}
                           </Link>
                         </h3>
-                        <p className="mt-4 line-clamp-6 max-w-[34ch] leading-relaxed lg:text-xl lg:leading-relaxed">
+                        <p className="mt-4 line-clamp-6 max-w-[34ch] text-pretty leading-relaxed lg:text-xl lg:leading-relaxed">
                           {leadSentences(summary ?? "", 220)}
                         </p>
                         <p aria-hidden="true" className="mt-6 card-cue">
                           View project
-                          <span aria-hidden="true" className="link-arrow">
-                            →
-                          </span>
+                          <LinkArrow />
                         </p>
                       </div>
                     </article>
@@ -227,9 +219,7 @@ const Home = async () => {
               className="group text-link mt-16 block border-t border-rule pt-6 sm:hidden"
             >
               More projects
-              <span aria-hidden="true" className="link-arrow">
-                →
-              </span>
+              <LinkArrow />
             </Link>
           </section>
         )}

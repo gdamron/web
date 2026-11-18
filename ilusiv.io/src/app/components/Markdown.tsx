@@ -6,6 +6,7 @@ import rehypeRaw from "rehype-raw";
 import IlusivImage from "./IlusivImage";
 import IlusivH1 from "./IlusivH1";
 import IlusivQuote from "./IlusivQuote";
+import { ExternalArrow } from "./Arrow";
 
 const Markdown = ({ source }: { source: string }) => {
   return (
@@ -24,9 +25,8 @@ const Markdown = ({ source }: { source: string }) => {
           return (
             <a href={href} target="_blank" rel="noopener noreferrer">
               {label}
-              <span className="ext-arrow text-anchor" aria-hidden="true">
-                {"\u00a0↗"}
-              </span>
+              {"\u00a0"}
+              <ExternalArrow className="text-anchor" />
               <span className="sr-only"> (opens in a new tab)</span>
             </a>
           );

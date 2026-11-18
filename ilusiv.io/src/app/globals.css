@@ -115,8 +115,8 @@ body {
 
   /* The arrow after an external link sits high and small, like a mark. */
   .ext-arrow {
-    font-size: 0.7em;
-    vertical-align: 0.2em;
+    @apply inline-block h-[0.6em] w-[0.6em];
+    vertical-align: 0.3em;
   }
 
   /* The flow field is quieter behind the hero's copy than around it. */
@@ -151,7 +151,7 @@ body {
 
   /* The arrow after a link label; it nudges forward with its group. */
   .link-arrow {
-    @apply ml-2 inline-block transition-transform duration-300 motion-reduce:transition-none;
+    @apply ml-2 inline-block h-[0.8em] w-[0.8em] align-[-0.05em] transition-transform duration-300 motion-reduce:transition-none;
   }
 
   .site-nav {
@@ -159,7 +159,7 @@ body {
   }
 
   .text-link {
-    @apply font-semibold text-anchor underline-offset-4 decoration-accent hover:underline;
+    @apply font-semibold text-anchor underline-offset-4 decoration-accent hover:underline lg:text-lg;
   }
 
   /* Scroll-in motion; see the Reveal component. */
@@ -195,7 +195,7 @@ body {
 
   /* The "read more" line in a card: decoration that follows the card's link. */
   .card-cue {
-    @apply font-semibold text-anchor underline-offset-4 decoration-accent;
+    @apply font-semibold text-anchor underline-offset-4 decoration-accent lg:text-lg;
   }
 
   .group:has(.stretched-link:hover) .card-cue,
@@ -303,6 +303,10 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
   }
 }
 

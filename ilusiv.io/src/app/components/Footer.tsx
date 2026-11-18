@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { links } from "../content/home";
+import { ExternalArrow } from "./Arrow";
 
 const siteLinks = [
   { name: "Work", path: "/projects" },
@@ -45,10 +46,8 @@ const Footer = () => {
                 className="inline-block py-1.5 underline-offset-8 decoration-2 decoration-accent hover:underline sm:py-0"
               >
                 {name}
-                <span className="ext-arrow" aria-hidden="true">
-                  {" "}
-                  ↗
-                </span>
+                {"\u00a0"}
+                <ExternalArrow />
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>
             </li>

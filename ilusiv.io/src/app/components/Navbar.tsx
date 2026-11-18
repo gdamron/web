@@ -131,7 +131,7 @@ const Navbar = () => {
       className={`site-nav fixed inset-x-0 top-0 z-30 h-12 border-b border-rule transition-colors duration-300 motion-reduce:transition-none ${inverse ? "theme-inverse" : ""}`}
     >
       <div className="page-column flex justify-between items-center h-full">
-        <Link href="/" className="font-headline text-2xl">
+        <Link href="/" className="relative top-0.5 font-headline text-2xl">
           (i)lusiv
         </Link>
         <div className="flex items-center sm:gap-5">
@@ -180,7 +180,7 @@ const Navbar = () => {
           <Link
             href="/"
             onClick={() => setIsMenuOpen(false)}
-            className="font-headline text-2xl"
+            className="relative top-0.5 font-headline text-2xl"
           >
             (i)lusiv
           </Link>

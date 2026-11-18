@@ -95,7 +95,7 @@ export const InlinePlayer = ({
       >
         <span className="leading-snug">
           <span className="block font-headline text-2xl">{heading}</span>
-          <span className="mt-1 block max-w-[28ch] opacity-80">
+          <span className="mt-1 block max-w-[28ch] text-balance opacity-80">
             {status === "error"
               ? "The audio couldn't start. Try again."
               : caption}
