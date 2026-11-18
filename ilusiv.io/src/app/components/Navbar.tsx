@@ -6,80 +6,73 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { name: "Projects", path: "/projects" },
+  { name: "Fugue", path: "/#fugue" },
+  { name: "Work", path: "/projects" },
   { name: "About", path: "/about" },
   { name: "Contact", path: "/contact" },
-  { name: "The Fugue Diaries", path: "/fugue-diaries" },
 ];
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathName = usePathname();
-
-  const onMenuClick = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const isCurrent = (path: string) =>
+    !path.includes("#") && pathName.startsWith(path);
 
   return (
-    <nav className="fixed w-full h-12 backdrop-blur-lg pt-2">
-      <div className="flex justify-between items-center h-full w-full px-8 2xl:px-16">
-        <Link href="/">
-          <h1 className="font-headline text-2xl">(i)lusiv</h1>
+    <nav className="site-nav fixed z-30 w-full h-12 backdrop-blur-lg pt-2">
+      <div className="page-column flex justify-between items-center h-full">
+        <Link href="/" className="font-headline text-2xl">
+          (i)lusiv
         </Link>
-        <div className="hidden sm:flex">
-          <ul className="hidden sm:flex">
-            {navItems.map(({ name, path }) => (
-              <Link key={path} href={path}>
-                <li
-                  className={`ml-8 ${pathName === path ? "underline" : "hover:underline"} underline-offset-8 decoration-2 decoration-accent text-lg`}
-                >
-                  {name}
-                </li>
+        <ul className="hidden sm:flex gap-8">
+          {navItems.map(({ name, path }) => (
+            <li key={path}>
+              <Link
+                href={path}
+                aria-current={isCurrent(path) ? "page" : undefined}
+                className={`${isCurrent(path) ? "underline" : "hover:underline"} underline-offset-8 decoration-2 decoration-accent text-lg`}
+              >
+                {name}
               </Link>
-            ))}
-          </ul>
-        </div>
-        <div onClick={onMenuClick} className="sm:hidden cursor-pointer h-6 w-6">
-          <MenuIcon />
-        </div>
-        <div
-          className={
-            isMenuOpen
-              ? "fixed left-0 top-0 w-[65%] sm:hidden h-screen bg-menu px-6 py-2 ease-in duration-200"
-              : "fixed left-[-100%] top-0 w-[65%] sm:hidden h-screen bg-menu px-6 py-2 ease-in duration-200"
-          }
+            </li>
+          ))}
+        </ul>
+        <button
+          type="button"
+          onClick={() => setIsMenuOpen(true)}
+          aria-label="Open menu"
+          aria-expanded={isMenuOpen}
+          className="sm:hidden h-6 w-6"
         >
-          <div className="flex w-full items-center justify-end">
-            <div
-              onClick={() => setIsMenuOpen(false)}
-              className="cursor-pointer"
-            >
-              <span className="text-4xl">×</span>
-            </div>
-          </div>
-          <div className="flex-col py-4">
-            <ul>
-              <Link href="/">
-                <li
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`py-4 ${pathName === "/" ? `underline` : ""} cursor-pointer decoration-accent`}
-                >
-                  Home
-                </li>
-              </Link>
-              {navItems.map(({ name, path }) => (
-                <Link key={path} href={path}>
-                  <li
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`py-4 ${pathName === path ? `underline` : ""} cursor-pointer decoration-accent`}
-                  >
-                    {name}
-                  </li>
-                </Link>
-              ))}
-            </ul>
-          </div>
+          <MenuIcon />
+        </button>
+      </div>
+      <div
+        className={`fixed top-0 w-[65%] sm:hidden h-screen bg-menu px-6 py-2 ease-in duration-200 ${isMenuOpen ? "left-0 visible" : "left-[-100%] invisible"}`}
+      >
+        <div className="flex w-full justify-end">
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen(false)}
+            aria-label="Close menu"
+            className="text-4xl leading-none py-1"
+          >
+            ×
+          </button>
         </div>
+        <ul className="py-4">
+          {[{ name: "Home", path: "/" }, ...navItems].map(({ name, path }) => (
+            <li key={path}>
+              <Link
+                href={path}
+                onClick={() => setIsMenuOpen(false)}
+                className={`block py-4 decoration-accent ${path === "/" ? (pathName === "/" ? "underline" : "") : isCurrent(path) ? "underline" : ""}`}
+              >
+                {name}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </nav>
   );

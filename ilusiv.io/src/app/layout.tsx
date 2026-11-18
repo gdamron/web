@@ -1,10 +1,11 @@
-import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { Open_Sans, Special_Elite } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import { MusicPlayerProvider } from "./components/MusicPlayer";
+import { DockedPlayer } from "./components/PlayButton";
 
-const MusicBox = dynamic(() => import("./components/MusicBox"), { ssr: false });
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -19,7 +20,8 @@ const specialElite = Special_Elite({
 
 export const metadata: Metadata = {
   title: "ilusiv",
-  description: "Generative music for all.",
+  description:
+    "A software studio that builds Fugue, a tool for composing generative music, and takes on consulting work in music, media and creator tools.",
 };
 
 export default function RootLayout({
@@ -32,11 +34,12 @@ export default function RootLayout({
       <body
         className={`tracking-wide font-light ${openSans.className} ${openSans.variable} ${specialElite.variable}`}
       >
-        <Navbar />
-        {children}
-        <div className="fixed bottom-0 right-0 p-8">
-          <MusicBox />
-        </div>
+        <MusicPlayerProvider>
+          <Navbar />
+          {children}
+          <Footer />
+          <DockedPlayer />
+        </MusicPlayerProvider>
       </body>
     </html>
   );

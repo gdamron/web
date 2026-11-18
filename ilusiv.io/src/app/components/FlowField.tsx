@@ -1,6 +1,8 @@
 "use client";
 
+import { useCallback, useEffect, useMemo } from "react";
 import P5Sketch from "./P5Sketch";
+import { PLAY_EVENT } from "./MusicPlayer";
 import P5 from "p5";
 
 class Grain {
@@ -69,50 +71,69 @@ class Grain {
   }
 }
 
+const CALM_T_INCR = 0.0002;
+const PLAYING_T_INCR = 0.0009;
+
+const createFlowState = () => ({
+  rad: 15.5,
+  grainCount: 1024,
+  grains: new Array<Grain>(),
+  color: "#ee66ee01",
+  tNoise: 0,
+  currentNoise: 0,
+  xyIncr: 0.025,
+  tIncr: CALM_T_INCR,
+  circleDiv: 3.5,
+  flowMag: 1,
+});
+
 const FlowField = () => {
-  const FLOW_STATE = {
-    rad: 15.5,
-    grainCount: 1024,
-    grains: new Array<Grain>(),
-    color: "#ee66ee01",
-    tNoise: 0,
-    currentNoise: 0,
-    xyIncr: 0.025,
-    tIncr: 0.0002,
-    circleDiv: 3.5,
-    flowMag: 1,
-  };
+  const FLOW_STATE = useMemo(createFlowState, []);
 
-  return (
-    <P5Sketch
-      setup={(p) => {
-        for (let i = 0; i < FLOW_STATE.grainCount; i++) {
-          const grainColor = p.color(FLOW_STATE.color);
-          const grain = new Grain(p, grainColor);
-          FLOW_STATE.grains.push(grain);
-        }
-      }}
-      draw={(p) => {
-        FLOW_STATE.tNoise += FLOW_STATE.tIncr;
-        const { circleDiv, flowMag, grains, rad, tNoise, xyIncr } = FLOW_STATE;
+  // The field shifts faster while the music plays, so the lines wander more.
+  useEffect(() => {
+    const onPlay = (event: Event) => {
+      const playing = (event as CustomEvent<boolean>).detail;
+      FLOW_STATE.tIncr = playing ? PLAYING_T_INCR : CALM_T_INCR;
+    };
+    window.addEventListener(PLAY_EVENT, onPlay);
+    return () => window.removeEventListener(PLAY_EVENT, onPlay);
+  }, [FLOW_STATE]);
 
-        for (const grain of grains) {
-          const row = p.floor(grain.pos.x / rad);
-          const col = p.floor(grain.pos.y / rad);
-
-          FLOW_STATE.currentNoise = p.noise(col * xyIncr, row * xyIncr, tNoise);
-
-          const angle = FLOW_STATE.currentNoise * p.TWO_PI * circleDiv;
-          const vec = P5.Vector.fromAngle(angle);
-          vec.setMag(flowMag);
-
-          grain.apply(vec);
-          grain.update(p);
-          grain.show(p);
-        }
-      }}
-    />
+  const setup = useCallback(
+    (p: P5) => {
+      FLOW_STATE.grains.length = 0;
+      for (let i = 0; i < FLOW_STATE.grainCount; i++) {
+        FLOW_STATE.grains.push(new Grain(p, p.color(FLOW_STATE.color)));
+      }
+    },
+    [FLOW_STATE],
   );
+
+  const draw = useCallback(
+    (p: P5) => {
+      FLOW_STATE.tNoise += FLOW_STATE.tIncr;
+      const { circleDiv, flowMag, grains, rad, tNoise, xyIncr } = FLOW_STATE;
+
+      for (const grain of grains) {
+        const row = p.floor(grain.pos.x / rad);
+        const col = p.floor(grain.pos.y / rad);
+
+        FLOW_STATE.currentNoise = p.noise(col * xyIncr, row * xyIncr, tNoise);
+
+        const angle = FLOW_STATE.currentNoise * p.TWO_PI * circleDiv;
+        const vec = P5.Vector.fromAngle(angle);
+        vec.setMag(flowMag);
+
+        grain.apply(vec);
+        grain.update(p);
+        grain.show(p);
+      }
+    },
+    [FLOW_STATE],
+  );
+
+  return <P5Sketch setup={setup} draw={draw} stillFrames={500} />;
 };
 
 export default FlowField;

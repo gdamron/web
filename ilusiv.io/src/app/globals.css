@@ -3,10 +3,25 @@
 @tailwind utilities;
 
 :root {
+  --accent-rgb: #ff00ff;
+}
+
+/* Two palettes. The page takes the one the browser asks for; anything inside
+   .theme-inverse takes the other, which sets it apart from the hero. */
+:root {
   --foreground-rgb: #2c3e50;
   --background-rgb: #ffffff;
   --menu-rgb: #eeeeee;
-  --accent-rgb: #ff00ff;
+  --muted-rgb: #66758a;
+  --rule-rgb: #2c3e5026;
+}
+
+.theme-inverse {
+  --foreground-rgb: #c8c8c8;
+  --background-rgb: #000000;
+  --menu-rgb: #181818;
+  --muted-rgb: #8c8c8c;
+  --rule-rgb: #c8c8c82e;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,7 +29,26 @@
     --foreground-rgb: #c8c8c8;
     --background-rgb: #000000;
     --menu-rgb: #181818;
+    --muted-rgb: #8c8c8c;
+    --rule-rgb: #c8c8c82e;
   }
+
+  .theme-inverse {
+    --foreground-rgb: #2c3e50;
+    --background-rgb: #ffffff;
+    --menu-rgb: #eeeeee;
+    --muted-rgb: #66758a;
+    --rule-rgb: #2c3e5026;
+  }
+}
+
+.theme-inverse {
+  color: var(--foreground-rgb);
+  background: var(--background-rgb);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -23,8 +57,80 @@ body {
   line-height: 1.7rem;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent-rgb);
+  outline-offset: 3px;
+}
+
+@layer components {
+  /* Shared column for the nav, every landing section and the footer. */
+  .page-column {
+    @apply mx-auto w-full max-w-6xl px-8 2xl:px-0;
+  }
+
+  /* Landing sections: heading in the margin, content beside it. */
+  .margin-grid {
+    @apply grid gap-x-12 gap-y-6 md:grid-cols-[minmax(0,4fr)_minmax(0,8fr)];
+  }
+
+  .section-heading {
+    @apply font-headline text-4xl leading-tight;
+  }
+
+  /* Tinted so the nav stays readable over either palette. */
+  .site-nav {
+    background: color-mix(in srgb, var(--background-rgb) 92%, transparent);
+  }
+
+  .text-link {
+    @apply font-semibold text-accent underline-offset-4 decoration-accent hover:underline;
+  }
+
+  .play-button {
+    background: color-mix(in srgb, var(--background-rgb) 60%, transparent);
+    @apply border border-rule shadow-md backdrop-blur-lg transition hover:scale-105 hover:shadow-lg;
+  }
+
+  .play-button[aria-pressed="true"] {
+    @apply border-accent;
+  }
+}
+
+/* The hero's copy is CMS markdown: its first heading becomes the headline and
+   its paragraphs the lede. Unlayered so it outranks the markdown utilities. */
+.hero-copy h1 {
+  max-width: 13ch;
+  padding: 0 0 1rem;
+  font-size: clamp(2.6rem, 7.5vw, 6rem);
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.hero-copy p {
+  max-width: 52ch;
+  padding-block: 0.6rem;
+  font-size: 1.125rem;
+  line-height: 1.625;
+}
+
+@media (min-width: 640px) {
+  .hero-copy p {
+    font-size: 1.25rem;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .play-button {
+    transition: none;
   }
 }
