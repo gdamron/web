@@ -20,21 +20,19 @@ const About = async () => {
       <h1 className="page-heading">About</h1>
       <div className="section-top mt-10 grid items-start gap-x-12 gap-y-10 sm:mt-14 md:grid-cols-12">
         {image && (
-          <div className="project-image aspect-[4/5] w-full max-w-[12rem] md:sticky md:top-24 md:col-span-4 md:max-w-none">
+          <div className="project-image aspect-[4/5] w-full max-w-[16rem] md:sticky md:top-24 md:col-span-4 md:max-w-none">
             <Image
               src={image}
               alt=""
               width={768}
               height={960}
               priority
-              sizes="(min-width: 1152px) 340px, (min-width: 768px) 33vw, 192px"
+              sizes="(min-width: 1152px) 340px, (min-width: 768px) 33vw, 256px"
             />
           </div>
         )}
         <div
-          className={`prose-body ${
-            image ? "md:col-span-7 md:col-start-6" : "md:col-span-12"
-          }`}
+          className={`prose-body ${image ? "md:col-span-8" : "md:col-span-12"}`}
         >
           <Markdown source={body} demoteHeadings />
         </div>

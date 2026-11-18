@@ -14,6 +14,7 @@ const Contact = () => (
       <p className="mt-6 max-w-[32ch] text-xl leading-snug sm:text-2xl sm:leading-snug">
         {contact.body}
       </p>
+      <p className="mt-6 text-muted">{contact.reply}</p>
     </div>
     <div className="lg:col-span-6 lg:col-start-7">
       <ContactForm />

@@ -7,7 +7,7 @@ import ClosingCta from "../../components/ClosingCta";
 import Markdown from "../../components/Markdown";
 import ProjectCard from "../../components/ProjectCard";
 import { fetchProject, fetchProjects } from "../../lib/cms";
-import { hostname } from "../../lib/text";
+import { hostname, leadSentences } from "../../lib/text";
 
 export const revalidate = 60;
 
@@ -27,7 +27,7 @@ const ProjectPage = async ({ params }: Props) => {
   ]);
   if (!project) notFound();
 
-  const { title, image, date, body, links = [] } = project;
+  const { title, image, date, body, summary, links = [] } = project;
   const year = date?.split("-")[0];
 
   // The three projects after this one, wrapping around at the end of the list.
@@ -44,9 +44,10 @@ const ProjectPage = async ({ params }: Props) => {
         Work
       </Link>
       <h1 className="page-heading mt-8">{title}</h1>
+      {summary && <p className="page-lede">{leadSentences(summary, 120)}</p>}
 
       {image && (
-        <div className="project-image mt-10 aspect-[3/2] sm:mt-14 sm:aspect-[2/1]">
+        <div className="project-image mt-10 aspect-[3/2] sm:mt-14 sm:aspect-[2/1] lg:aspect-[21/9]">
           <Image
             src={image}
             alt=""
@@ -102,7 +103,7 @@ const ProjectPage = async ({ params }: Props) => {
               <LinkArrow />
             </Link>
           </div>
-          <ul className="mt-10 grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2 sm:gap-y-14 lg:grid-cols-3">
             {next.map((other) => (
               <li key={other.slug}>
                 <ProjectCard project={other} level="h3" />

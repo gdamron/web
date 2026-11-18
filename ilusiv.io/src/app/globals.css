@@ -105,7 +105,7 @@ main {
 
   /* A project's year and links, set beside its write-up. */
   .project-facts {
-    @apply flex flex-wrap gap-x-12 gap-y-6 self-start lg:flex-col;
+    @apply flex flex-wrap gap-x-12 gap-y-6 self-start lg:sticky lg:top-24 lg:flex-col;
   }
 
   .project-facts dt {
@@ -139,11 +139,8 @@ main {
   /* A select drawn like the other fields, with its own chevron. */
   .field-select {
     @apply appearance-none pr-12;
-    background-image: linear-gradient(
-        45deg,
-        transparent 50%,
-        currentColor 50%
-      ),
+    background-image:
+      linear-gradient(45deg, transparent 50%, currentColor 50%),
       linear-gradient(135deg, currentColor 50%, transparent 50%);
     background-position:
       right 1.375rem center,

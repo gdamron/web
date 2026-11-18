@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { links } from "../content/home";
 import { ExternalArrow } from "./Arrow";
 
@@ -15,6 +18,7 @@ const elsewhere = [
 ];
 
 const Footer = () => {
+  const pathname = usePathname();
   return (
     <footer data-inverse className="theme-inverse border-t border-rule">
       <div className="page-column flex flex-col gap-8 py-12 min-[1400px]:pb-16 sm:flex-row sm:items-baseline sm:justify-between">
@@ -31,7 +35,8 @@ const Footer = () => {
             <li key={path}>
               <Link
                 href={path}
-                className="inline-block py-1.5 underline-offset-8 decoration-2 decoration-accent hover:underline sm:py-0"
+                aria-current={pathname.startsWith(path) ? "page" : undefined}
+                className="inline-block py-1.5 underline-offset-8 decoration-2 decoration-accent hover:underline aria-[current]:underline sm:py-0"
               >
                 {name}
               </Link>

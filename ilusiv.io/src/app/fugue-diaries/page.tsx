@@ -53,10 +53,12 @@ const FugueDiaries = async () => {
               ? enclosure.url
               : undefined;
           return (
-            <li key={link} className="border-b border-rule py-8">
-              <article className="group relative grid gap-x-10 gap-y-5 sm:grid-cols-12">
+            <li key={link} className="border-b border-rule py-6 sm:py-8">
+              <article
+                className={`group relative grid gap-x-4 sm:grid-cols-12 sm:gap-x-10 ${cover ? "grid-cols-[6.5rem_1fr]" : ""}`}
+              >
                 {cover && (
-                  <div className="project-image aspect-video sm:col-span-3">
+                  <div className="project-image aspect-square self-start sm:col-span-3 sm:aspect-video">
                     <Image
                       src={cover}
                       alt=""
@@ -72,7 +74,7 @@ const FugueDiaries = async () => {
                   {pubDate && (
                     <p className="text-sm text-muted">{formatDate(pubDate)}</p>
                   )}
-                  <h2 className="mt-2 font-headline text-2xl leading-tight lg:text-3xl lg:leading-tight">
+                  <h2 className="mt-1 font-headline text-xl leading-tight sm:mt-2 sm:text-2xl sm:leading-tight lg:text-3xl lg:leading-tight">
                     <a
                       href={link}
                       target="_blank"
@@ -84,7 +86,7 @@ const FugueDiaries = async () => {
                     </a>
                   </h2>
                   {contentSnippet && (
-                    <p className="mt-3 line-clamp-3 max-w-[60ch] text-pretty leading-relaxed">
+                    <p className="mt-3 line-clamp-2 max-w-[60ch] sm:line-clamp-3 text-pretty leading-relaxed">
                       {contentSnippet}
                     </p>
                   )}
@@ -94,12 +96,19 @@ const FugueDiaries = async () => {
           );
         })}
       </ul>
-      <iframe
-        src={`${SUBSTACK_URL}/embed`}
-        title="Subscribe to The Fugue Diaries"
-        height="150"
-        className="mt-12 w-full max-w-xl rounded-md"
-      />
+      <section className="mt-16 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 sm:mt-20">
+        <h2 className="section-heading">Get new posts by email</h2>
+        <a
+          href={`${SUBSTACK_URL}/subscribe`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-link"
+        >
+          Subscribe on Substack
+          <ExternalArrow />
+          <span className="sr-only"> (opens in a new tab)</span>
+        </a>
+      </section>
       <ClosingCta className="section-top mt-20 sm:mt-28" />
     </main>
   );

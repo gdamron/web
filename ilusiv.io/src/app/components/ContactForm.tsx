@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import AlertMessage from "./AlertMessage";
+import { contact } from "../content/home";
 import { ContactMessage, EMAIL_PATTERN, LIMITS } from "../lib/contact";
 
 const MESSAGE_ERRORS: Record<string, string> = {
@@ -51,7 +52,7 @@ export const ContactForm = () => {
           Thanks for reaching out.
         </h2>
         <p className="mt-4 max-w-[44ch] text-lg leading-relaxed">
-          Your message is on its way. Expect a reply within a few days.
+          Your message is on its way. {contact.reply}
         </p>
       </div>
     );
@@ -165,7 +166,11 @@ export const ContactForm = () => {
           message="The message couldn't be sent. Please try again."
         />
       )}
-      <button type="submit" disabled={isSubmitting} className="cta-button">
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="cta-button w-full sm:w-auto"
+      >
         {isSubmitting ? "Sending…" : "Send message"}
       </button>
     </form>
