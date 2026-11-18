@@ -20,10 +20,6 @@ import {
 const MUSIC_BOX_URL = "/fugue/music_box.json";
 const TRACK = { title: "Music Box", artist: "ilusiv" };
 
-// Fired on window whenever playback starts or stops, so visuals outside the
-// React tree (the flow field) can follow the music.
-export const PLAY_EVENT = "ilusiv:playing";
-
 export type PlayerStatus = "idle" | "loading" | "playing" | "error";
 
 type MusicPlayer = {
@@ -131,7 +127,6 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
       setPlaying(false);
     });
 
-    window.dispatchEvent(new CustomEvent(PLAY_EVENT, { detail: playing }));
     if ("mediaSession" in navigator) {
       navigator.mediaSession.playbackState = playing ? "playing" : "paused";
     }

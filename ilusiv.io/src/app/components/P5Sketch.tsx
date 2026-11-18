@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import P5 from "p5";
 
 type P5SketchProps = {
@@ -12,19 +12,38 @@ type P5SketchProps = {
   // Frames to advance up front when the visitor prefers reduced motion; the
   // sketch is then drawn once and holds still instead of animating.
   stillFrames?: number;
+  // Holds the sketch on its current frame.
+  paused?: boolean;
 };
 
+const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+
 // Runs a p5 sketch on a canvas that fills its parent element.
-const P5Sketch = ({ setup, step, render, stillFrames = 0 }: P5SketchProps) => {
+const P5Sketch = ({
+  setup,
+  step,
+  render,
+  stillFrames = 0,
+  paused = false,
+}: P5SketchProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+
+  // Followed live, so turning the setting on stops a running sketch.
+  const [reduceMotion, setReduceMotion] = useState(
+    () => window.matchMedia(REDUCED_MOTION).matches,
+  );
+  useEffect(() => {
+    const query = window.matchMedia(REDUCED_MOTION);
+    const onChange = () => setReduceMotion(query.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     const host = renderRef.current;
     if (!host) return;
-
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
 
     // Starts the sketch from the beginning. Under reduced motion it is run
     // ahead and drawn once.
@@ -42,7 +61,7 @@ const P5Sketch = ({ setup, step, render, stillFrames = 0 }: P5SketchProps) => {
         if (reduceMotion) p.noLoop();
       };
       p.draw = () => {
-        if (reduceMotion) return;
+        if (reduceMotion || pausedRef.current) return;
         step(p);
         render(p);
       };
@@ -50,12 +69,18 @@ const P5Sketch = ({ setup, step, render, stillFrames = 0 }: P5SketchProps) => {
 
     // A resize clears the canvas, so ignore height-only changes (mobile
     // browsers fire those as the address bar hides).
+    // The restart waits for the resize to settle, so dragging a window edge
+    // does not start the sketch over on every pixel.
     let width = host.clientWidth;
+    let settle = 0;
     const observer = new ResizeObserver(() => {
       if (host.clientWidth === width) return;
-      width = host.clientWidth;
-      sketch.resizeCanvas(host.clientWidth, host.clientHeight);
-      start(sketch);
+      window.clearTimeout(settle);
+      settle = window.setTimeout(() => {
+        width = host.clientWidth;
+        sketch.resizeCanvas(host.clientWidth, host.clientHeight);
+        start(sketch);
+      }, 150);
     });
     observer.observe(host);
 
@@ -75,12 +100,13 @@ const P5Sketch = ({ setup, step, render, stillFrames = 0 }: P5SketchProps) => {
     visibility.observe(host);
 
     return () => {
+      window.clearTimeout(settle);
       scheme.removeEventListener("change", onScheme);
       visibility.disconnect();
       observer.disconnect();
       sketch.remove();
     };
-  }, [setup, step, render, stillFrames]);
+  }, [setup, step, render, stillFrames, reduceMotion]);
 
   return <div ref={renderRef} className="h-full w-full" />;
 };

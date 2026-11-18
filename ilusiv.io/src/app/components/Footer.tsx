@@ -17,7 +17,7 @@ const elsewhere = [
 const Footer = () => {
   return (
     <footer data-inverse className="theme-inverse border-t border-rule">
-      <div className="page-column flex flex-col gap-8 py-12 sm:flex-row sm:items-baseline sm:justify-between">
+      <div className="page-column flex flex-col gap-8 py-12 min-[1400px]:pb-16 sm:flex-row sm:items-baseline sm:justify-between">
         <div>
           <Link href="/" className="font-headline text-2xl">
             (i)lusiv
@@ -46,7 +46,6 @@ const Footer = () => {
                 className="inline-block py-1.5 underline-offset-8 decoration-2 decoration-accent hover:underline sm:py-0"
               >
                 {name}
-                {"\u00a0"}
                 <ExternalArrow />
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>

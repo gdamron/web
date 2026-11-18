@@ -15,7 +15,6 @@ const navItems = [
   { name: "fyūg", section: "fyug" },
   { name: "Services", section: "services" },
   { name: "Work", section: "work", page: "/projects" },
-  { name: "About", page: "/about" },
   { name: "Contact", section: "contact", page: "/contact" },
 ];
 

@@ -115,7 +115,7 @@ body {
 
   /* The arrow after an external link sits high and small, like a mark. */
   .ext-arrow {
-    @apply inline-block h-[0.6em] w-[0.6em];
+    @apply ml-[0.25em] inline-block h-[0.6em] w-[0.6em];
     vertical-align: 0.3em;
   }
 
@@ -241,7 +241,9 @@ body {
   .play-note {
     background: color-mix(in srgb, var(--background-rgb) 85%, transparent);
     color: var(--foreground-rgb);
-    @apply relative max-w-[16rem] rounded-full border border-rule px-4 py-2 text-left text-sm font-normal shadow-md backdrop-blur-lg;
+    /* No wider than the page margin it sits in. */
+    max-width: max(9rem, calc((100vw - 68rem) / 2 - 2.5rem));
+    @apply relative rounded-3xl border border-rule px-4 py-2 text-left text-sm font-normal shadow-md backdrop-blur-lg;
   }
 
   /* A small pointer from the caption down to the button's center. */

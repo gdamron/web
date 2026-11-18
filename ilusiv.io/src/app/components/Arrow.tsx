@@ -17,9 +17,13 @@ export const LinkArrow = () => (
   </svg>
 );
 
-// Follows a link that opens another site.
+// Follows a link that opens another site. The word joiner keeps it on the
+// same line as the word before it.
 export const ExternalArrow = ({ className = "" }: { className?: string }) => (
-  <svg {...shared} className={`ext-arrow ${className}`}>
-    <path d="M4 12l8-8M5.5 4H12v6.5" />
-  </svg>
+  <span className="whitespace-nowrap">
+    {"\u2060"}
+    <svg {...shared} className={`ext-arrow ${className}`}>
+      <path d="M4 12l8-8M5.5 4H12v6.5" />
+    </svg>
+  </span>
 );

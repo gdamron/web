@@ -1,6 +1,6 @@
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+import HeroField from "./components/HeroField";
 import Markdown from "./components/Markdown";
 import { InlinePlayer } from "./components/PlayButton";
 import Reveal from "./components/Reveal";
@@ -8,10 +8,6 @@ import { contact, hero, services, tags, track, work } from "./content/home";
 import { fetchList, fetchPageBody, fetchProjects } from "./lib/cms";
 import { leadSentences } from "./lib/text";
 import { ExternalArrow, LinkArrow } from "./components/Arrow";
-
-const FlowField = dynamic(() => import("./components/FlowField"), {
-  ssr: false,
-});
 
 export const revalidate = 60;
 
@@ -46,9 +42,7 @@ const Home = async () => {
   return (
     <main id="content">
       <section className="relative isolate flex min-h-[calc(100svh-5rem)] flex-col justify-center">
-        <div className="hero-field absolute inset-0 -z-10" aria-hidden="true">
-          <FlowField />
-        </div>
+        <HeroField />
         <div className="page-column pb-16 pt-24">
           <div className="hero-copy">
             <Markdown source={heroBody} />
@@ -74,7 +68,6 @@ const Home = async () => {
                   <h2 className="display-heading md:-mt-2">
                     <Link
                       href={`/projects/${feature.slug}`}
-                      aria-label={`Read about ${feature.title}`}
                       className="stretched-link"
                     >
                       {feature.title}
@@ -97,13 +90,12 @@ const Home = async () => {
                         className="text-link relative z-10"
                       >
                         Visit {hostname(href)}
-                        {"\u00a0"}
                         <ExternalArrow />
                         <span className="sr-only"> (opens in a new tab)</span>
                       </a>
                     ))}
                   </p>
-                  <div className="relative z-10 mt-9 border-t border-rule pt-8 md:mt-auto">
+                  <div className="relative z-10 mt-9 border-t border-rule pt-8 md:mt-12">
                     <InlinePlayer title={track.title} caption={track.caption} />
                   </div>
                 </div>
@@ -189,7 +181,7 @@ const Home = async () => {
                           alt=""
                           width={1344}
                           height={896}
-                          sizes="(min-width: 768px) 58vw, 100vw"
+                          sizes="(min-width: 1152px) 616px, (min-width: 768px) 58vw, 100vw"
                         />
                       </div>
                       <div className="md:col-span-5">

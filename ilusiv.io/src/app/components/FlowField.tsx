@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import P5Sketch from "./P5Sketch";
-import { PLAY_EVENT } from "./MusicPlayer";
+import { useMusicPlayer } from "./MusicPlayer";
 import P5 from "p5";
 
 // Each grain leaves a faint stroke as it moves. The strokes build up on a
@@ -110,18 +110,16 @@ const createFlowState = () => ({
   layer: null as CanvasRenderingContext2D | null,
 });
 
-const FlowField = () => {
-  const FLOW_STATE = useMemo(createFlowState, []);
+const FlowField = ({ paused = false }: { paused?: boolean }) => {
+  const stateRef = useRef<ReturnType<typeof createFlowState>>();
+  stateRef.current ??= createFlowState();
+  const FLOW_STATE = stateRef.current;
 
-  // The field shifts faster while the music plays, so the lines wander more.
+  // The field shifts faster while the music sounds, so the lines wander more.
+  const { status } = useMusicPlayer();
   useEffect(() => {
-    const onPlay = (event: Event) => {
-      const playing = (event as CustomEvent<boolean>).detail;
-      FLOW_STATE.tIncr = playing ? PLAYING_T_INCR : CALM_T_INCR;
-    };
-    window.addEventListener(PLAY_EVENT, onPlay);
-    return () => window.removeEventListener(PLAY_EVENT, onPlay);
-  }, [FLOW_STATE]);
+    FLOW_STATE.tIncr = status === "playing" ? PLAYING_T_INCR : CALM_T_INCR;
+  }, [FLOW_STATE, status]);
 
   const setup = useCallback(
     (p: P5) => {
@@ -223,7 +221,13 @@ const FlowField = () => {
   );
 
   return (
-    <P5Sketch setup={setup} step={step} render={render} stillFrames={400} />
+    <P5Sketch
+      setup={setup}
+      step={step}
+      render={render}
+      stillFrames={400}
+      paused={paused}
+    />
   );
 };
 
