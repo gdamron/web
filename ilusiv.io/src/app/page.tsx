@@ -45,48 +45,52 @@ const Home = async () => {
         {feature && (
           <section id="fyug" className="page-column scroll-mt-20 pb-12 pt-24">
             <Reveal>
-              <div className="group relative grid gap-x-12 gap-y-10 md:grid-cols-12">
-                <div className="project-image order-last aspect-[3/2] md:col-span-7">
+              <div className="group relative grid gap-x-12 gap-y-10 lg:grid-cols-12">
+                <div className="project-image order-last aspect-[3/2] lg:col-span-7">
                   <Image
                     src={feature.image}
                     alt=""
                     width={1152}
                     height={768}
-                    sizes="(min-width: 1152px) 616px, (min-width: 768px) 58vw, 100vw"
+                    sizes="(min-width: 1152px) 616px, (min-width: 1024px) 58vw, 100vw"
                   />
                 </div>
-                <div className="flex flex-col md:col-span-5">
-                  <h2 className="display-heading md:-mt-2">
-                    <Link
-                      href={`/projects/${feature.slug}`}
-                      className="stretched-link"
-                    >
-                      {feature.title}
-                    </Link>
-                  </h2>
-                  <p className="mt-5 max-w-[26ch] text-2xl leading-snug">
-                    {feature.summary}
-                  </p>
-                  <p className="mt-5 flex flex-wrap gap-x-8 gap-y-4">
-                    <span aria-hidden="true" className="card-cue">
-                      Learn more
-                      <LinkArrow />
-                    </span>
-                    {(feature.links ?? []).map((href) => (
-                      <a
-                        key={href}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-link relative z-10"
+                {/* The copy and the player stack on a phone, sit side by side
+                    on a tablet, and stack again beside the image on desktop. */}
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between md:gap-x-12 lg:col-span-5 lg:flex-col lg:items-stretch lg:justify-start">
+                  <div>
+                    <h2 className="display-heading lg:-mt-2">
+                      <Link
+                        href={`/projects/${feature.slug}`}
+                        className="stretched-link"
                       >
-                        Visit {hostname(href)}
-                        <ExternalArrow />
-                        <span className="sr-only"> (opens in a new tab)</span>
-                      </a>
-                    ))}
-                  </p>
-                  <div className="relative z-10 mt-9 md:mt-auto md:pt-12">
+                        {feature.title}
+                      </Link>
+                    </h2>
+                    <p className="mt-5 text-pretty text-2xl leading-snug lg:max-w-[26ch]">
+                      {feature.summary}
+                    </p>
+                    <p className="mt-5 flex flex-wrap gap-x-8 gap-y-4">
+                      <span aria-hidden="true" className="card-cue">
+                        Learn more
+                        <LinkArrow />
+                      </span>
+                      {(feature.links ?? []).map((href) => (
+                        <a
+                          key={href}
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-link relative z-10"
+                        >
+                          Visit {hostname(href)}
+                          <ExternalArrow />
+                          <span className="sr-only"> (opens in a new tab)</span>
+                        </a>
+                      ))}
+                    </p>
+                  </div>
+                  <div className="relative z-10 mt-9 md:mt-0 md:shrink-0 lg:mt-auto lg:pt-12">
                     <InlinePlayer title={track.title} caption={track.caption} />
                   </div>
                 </div>

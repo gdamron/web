@@ -70,8 +70,9 @@ const PlayButton = ({
   );
 };
 
-// A page's own control: one button holding the circle and the piece's name,
-// with a line that reports loading and failure.
+// A page's own control: one button holding the circle and the piece's name.
+// The name stays put, so a long title sets the same way in every state; the
+// line under it reports loading and failure.
 export const InlinePlayer = ({
   title,
   caption,
@@ -81,11 +82,11 @@ export const InlinePlayer = ({
 }) => {
   const { status } = useMusicPlayer();
 
-  const heading = {
-    idle: `Play ${title}`,
-    loading: `Loading ${title}…`,
-    playing: `Playing ${title}`,
-    error: `Play ${title}`,
+  const line = {
+    idle: caption,
+    loading: "Loading…",
+    playing: caption,
+    error: "The audio couldn't start. Try again.",
   }[status];
 
   return (
@@ -95,11 +96,11 @@ export const InlinePlayer = ({
         hitClassName="gap-5 rounded-none text-left"
       >
         <span className="leading-snug">
-          <span className="block font-headline text-2xl">{heading}</span>
-          <span className="mt-1 block max-w-[28ch] text-balance opacity-80">
-            {status === "error"
-              ? "The audio couldn't start. Try again."
-              : caption}
+          <span className="block text-balance font-headline text-2xl leading-tight">
+            {title}
+          </span>
+          <span className="mt-1.5 block max-w-[28ch] text-balance opacity-80">
+            {line}
           </span>
         </span>
       </PlayButton>
@@ -115,9 +116,10 @@ const useReady = () => {
   return ready;
 };
 
+// The caption names the piece; loading and failure stay short.
 const ROAMING_NOTE = {
   idle: `Play ${track.title}`,
-  loading: `Loading ${track.title}…`,
+  loading: "Loading…",
   playing: "",
   error: "Couldn't start. Try again.",
 };
