@@ -2,6 +2,7 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import { useInverseAt } from "../lib/useInverseAt";
+import { track } from "../content/home";
 import { useMusicPlayer } from "./MusicPlayer";
 
 const PlayIcon = () => (
@@ -43,10 +44,10 @@ const PlayButton = ({
   const { playing, status, toggle } = useMusicPlayer();
   // The name starts with the words shown beside the button, for voice control.
   const label = {
-    idle: "Play Music Box",
-    loading: "Loading Music Box, press to cancel",
-    playing: "Playing Music Box, press to stop",
-    error: "Play Music Box",
+    idle: `Play ${track.title}`,
+    loading: `Loading ${track.title}, press to cancel`,
+    playing: `Playing ${track.title}, press to stop`,
+    error: `Play ${track.title}`,
   }[status];
 
   return (
@@ -115,8 +116,8 @@ const useReady = () => {
 };
 
 const ROAMING_NOTE = {
-  idle: "Play Music Box",
-  loading: "Loading Music Box…",
+  idle: `Play ${track.title}`,
+  loading: `Loading ${track.title}…`,
   playing: "",
   error: "Couldn't start. Try again.",
 };
