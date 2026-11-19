@@ -116,10 +116,9 @@ const useReady = () => {
   return ready;
 };
 
-// Short enough to sit on one line in the page margin; the button's own name
-// carries the piece's title.
+// The caption names the piece; loading and failure stay short.
 const ROAMING_NOTE = {
-  idle: "Play music",
+  idle: `Play ${track.title}`,
   loading: "Loading…",
   playing: "",
   error: "Couldn't start. Try again.",
