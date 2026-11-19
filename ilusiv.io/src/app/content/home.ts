@@ -5,9 +5,12 @@ export const hero = {
   entryId: "dtMEs39juy5zPeh31pwxy",
 };
 
-// The label beside the play button in the feature block.
+// The piece the site plays: its name on every play control, and the line
+// beside the play button in the feature block.
 export const track = {
-  title: "Music Box",
+  title: "A Sleeping Dog's Lie",
+  // Where the piece's fyūg invention is served from.
+  url: "/fugue/a_sleeping_dogs_lie.json",
   caption: "A fyūg invention, generated live in your browser.",
 };
 

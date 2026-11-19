@@ -16,9 +16,9 @@ import {
   getMediaSinkNode,
   primeMediaAudio,
 } from "../lib/iosUnmute";
+import { track } from "../content/home";
 
-const MUSIC_BOX_URL = "/fugue/music_box.json";
-const TRACK = { title: "Music Box", artist: "ilusiv" };
+const TRACK = { title: track.title, artist: "ilusiv" };
 
 export type PlayerStatus = "idle" | "loading" | "playing" | "error";
 
@@ -31,8 +31,8 @@ type MusicPlayer = {
 
 const STATUS_NEWS: Record<PlayerStatus, string> = {
   idle: "",
-  loading: "Loading Music Box…",
-  playing: "Playing Music Box",
+  loading: `Loading ${track.title}…`,
+  playing: `Playing ${track.title}`,
   error: "The audio couldn't start. Try again.",
 };
 
@@ -71,9 +71,9 @@ export const MusicPlayerProvider = ({ children }: PropsWithChildren) => {
         const sinkNode = getMediaSinkNode();
         const [{ FuguePlayer }, invention] = await Promise.all([
           import("@ilusiv/fugue-js"),
-          fetch(MUSIC_BOX_URL).then((response) => {
+          fetch(track.url).then((response) => {
             if (!response.ok) {
-              throw new Error(`Unable to load ${MUSIC_BOX_URL}`);
+              throw new Error(`Unable to load ${track.url}`);
             }
             return response.text();
           }),
